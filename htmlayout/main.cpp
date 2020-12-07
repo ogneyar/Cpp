@@ -1,12 +1,12 @@
-#include <htmlayout.h>
+#include "htmlayout.h"
 
-#pragma comment(lib, "HTMLayout.lib")
+// #pragma comment(lib, "HTMLayout.lib")
 
-#include <tchar.h> 
-#include <Windows.h>   
-#pragma comment ( lib, "HTMLayout.lib" )   
+#include <tchar.h>
+#include <Windows.h>
+#pragma comment ( lib, "HTMLayout.lib" )
 
-LRESULT CALLBACK WindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );   
+LRESULT CALLBACK WindowProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam );
 
 struct DOMEventsHandlerType: htmlayout::event_handler {       
 
