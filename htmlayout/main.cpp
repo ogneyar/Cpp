@@ -1,4 +1,8 @@
-#include <HTMLayout\htmlayout.h> 
+// #include "htmlayout\htmlayout.dll"
+// #include <htmlayout.h>
+
+#pragma comment(lib, "HTMLayout.lib")
+
 #include <tchar.h> 
 #include <Windows.h>   
 #pragma comment ( lib, "HTMLayout.lib" )   
