@@ -30,7 +30,7 @@ int main() {
   // cout << "&content_type2: " << *string_content2 << endl;
   // cout << endl;
 
-  response << "HTTP/1.1 200 OK\r\n"
+  response << "- C++ -\r\n\r\n" << "HTTP/1.1 200 OK\r\n"
     << "Version: HTTP/1.1\r\n"
     // задаём тип контента и кодировку
     << set_content_type("text/html", "utf-8")
