@@ -1,0 +1,7 @@
+DirectoryIndex hello.cgi index.html
+Options +ExecCGI
+AddHandler cgi-script .cgi
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /site.cgi/$1 [QSA,PT,L]
