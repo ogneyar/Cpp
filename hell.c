@@ -1,3 +1,11 @@
+#ifdef _WIN64
+#define OS_BIT 64
+#endif // !WIN64
+
+#ifdef _WIN32
+#define OS_BIT 32
+#endif // !WIN32
+
 // #define _CRT_SECURE_NO_WARNINGS // для возможности использования scanf
 #include <stdlib.h> // для перехода на русский язык
 #include <stdio.h>
@@ -9,7 +17,7 @@ char h1_text(char text);
 
 int main() {
   
-  printf("-= C =-\r\n\r\n");  
+  printf("-= C =-  win%d\r\n\r\n", OS_BIT);  
 
   printf("HTTP/1.1 200 OK\r\nVersion: HTTP/1.1\r\n");  
 

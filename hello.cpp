@@ -1,3 +1,11 @@
+#ifdef _WIN64
+#define OS_BIT 64
+#endif // !WIN64
+
+#ifdef _WIN32
+#define OS_BIT 32
+#endif // !WIN32
+
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -30,7 +38,7 @@ int main() {
   // cout << "&content_type2: " << *string_content2 << endl;
   // cout << endl;
 
-  response << "- C++ -\r\n\r\n" << "HTTP/1.1 200 OK\r\n"
+  response << "-= C++ =-  " << "win" << OS_BIT << "\r\n\r\n" << "HTTP/1.1 200 OK\r\n"
     << "Version: HTTP/1.1\r\n"
     // задаём тип контента и кодировку
     << set_content_type("text/html", "utf-8")
