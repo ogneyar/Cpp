@@ -9,3 +9,6 @@ c:
 
 server:
 	g++ -O3 -s server.cpp -o server.exe
+
+ci:
+	g++ -O3 -s ci.cpp -o ci.exe
