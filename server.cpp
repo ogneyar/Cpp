@@ -1,10 +1,13 @@
+// https://code-live.ru/post/cpp-http-server-over-sockets/
+
+
 #include <iostream>
 #include <sstream>
 #include <string>
 
 // Для корректной работы freeaddrinfo в MinGW
 // Подробнее: http://stackoverflow.com/a/20306451
-#define _WIN32_WINNT 0x501
+// #define _WIN32_WINNT 0x501
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -103,71 +106,74 @@ int main()
 
 
 
-
-    // Принимаем входящие соединения
-    int client_socket = accept(listen_socket, NULL, NULL);
-    if (client_socket == INVALID_SOCKET) {
-        cerr << "accept failed: " << WSAGetLastError() << "\n";
-        closesocket(listen_socket);
-        WSACleanup();
-        return 1;
-    }
-
-
-
-
-
-
-
     const int max_client_buffer_size = 1024;
     char buf[max_client_buffer_size];
 
-    result = recv(client_socket, buf, max_client_buffer_size, 0);
+    long long unsigned int client_socket = INVALID_SOCKET;
 
-    std::stringstream response; // сюда будет записываться ответ клиенту
-    std::stringstream response_body; // тело ответа
+    for (;;) {
 
-    if (result == SOCKET_ERROR) {
-        // ошибка получения данных
-        cerr << "recv failed: " << result << "\n";
-        closesocket(client_socket);
-    } else if (result == 0) {
-        // соединение закрыто клиентом
-        cerr << "connection closed...\n";
-    } else if (result > 0) {
-        // Мы знаем фактический размер полученных данных, поэтому ставим метку конца строки
-        // В буфере запроса.
-        buf[result] = '\0';
+        // Принимаем входящие соединения
+        client_socket = accept(listen_socket, NULL, NULL);
+        if (client_socket == INVALID_SOCKET) {
+            cerr << "accept failed: " << WSAGetLastError() << "\n";
+            closesocket(listen_socket);
+            WSACleanup();
+            return 1;
+        }
 
-        // Данные успешно получены
-        // формируем тело ответа (HTML)
-        response_body << "<title>Test C++ HTTP Server</title>\n"
-            << "<h1>Test page</h1>\n"
-            << "<p>This is body of the test page...</p>\n"
-            << "<h2>Request headers</h2>\n"
-            << "<pre>" << buf << "</pre>\n"
-            << "<em><small>Test C++ Http Server</small></em>\n";
 
-        // Формируем весь ответ вместе с заголовками
-        response << "HTTP/1.1 200 OK\r\n"
-            << "Version: HTTP/1.1\r\n"
-            << "Content-Type: text/html; charset=utf-8\r\n" 
-            << "Content-Length: " << response_body.str().length()
-            << "\r\n\r\n"
-            << response_body.str();
 
-        // Отправляем ответ клиенту с помощью функции send
-        result = send(client_socket, response.str().c_str(),
-            response.str().length(), 0);
+
+        result = recv(client_socket, buf, max_client_buffer_size, 0);
+
+        std::stringstream response; // сюда будет записываться ответ клиенту
+        std::stringstream response_body; // тело ответа
 
         if (result == SOCKET_ERROR) {
-            // произошла ошибка при отправле данных
-            cerr << "send failed: " << WSAGetLastError() << "\n";
-        }
-        // Закрываем соединение к клиентом
-        closesocket(client_socket);
-    }
+            // ошибка получения данных
+            cerr << "recv failed: " << result << "\n";
+            closesocket(client_socket);
+        } else if (result == 0) {
+            // соединение закрыто клиентом
+            cerr << "connection closed...\n";
+        } else if (result > 0) {
+            // Мы знаем фактический размер полученных данных, поэтому ставим метку конца строки
+            // В буфере запроса.
+            buf[result] = '\0';
 
+            // Данные успешно получены
+            // формируем тело ответа (HTML)
+            response_body << "<title>Test C++ HTTP Server</title>\n"
+                << "<h1>Test page</h1>\n"
+                << "<p>This is body of the test page...</p>\n"
+                << "<h2>Request headers</h2>\n"
+                << "<pre>" << buf << "</pre>\n"
+                << "<em><small>Test C++ Http Server</small></em>\n";
+
+            // Формируем весь ответ вместе с заголовками
+            response << "HTTP/1.1 200 OK\r\n"
+                << "Version: HTTP/1.1\r\n"
+                << "Content-Type: text/html; charset=utf-8\r\n"
+                << "Content-Length: " << response_body.str().length()
+                << "\r\n\r\n"
+                << response_body.str();
+
+            // Отправляем ответ клиенту с помощью функции send
+            result = send(client_socket, response.str().c_str(),
+                response.str().length(), 0);
+
+            if (result == SOCKET_ERROR) {
+                // произошла ошибка при отправле данных
+                cerr << "send failed: " << WSAGetLastError() << "\n";
+            }
+            // Закрываем соединение к клиентом
+            closesocket(client_socket);
+        }
+
+
+
+    }
 
 
 

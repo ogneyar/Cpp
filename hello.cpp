@@ -11,6 +11,9 @@
 #include <string>
 #include <stdlib.h>
 
+// библиотека си для printf
+#include <stdio.h>
+
 using namespace std;
 
 stringstream response;
