@@ -14,17 +14,24 @@
 // Для работы с сокетам
 #pragma comment(lib, "Ws2_32.lib")
 
-// using std::cerr;
+
+
+
 using namespace std;
 
-auto maain() -> int {    	
-    cerr << "tipa failed 5\n";
-    return cin.get();
+void maain() {    	
+    cerr << "tipa failed 5\n";    
 }
 
 int main()
 {
-    cout << maain();
+    // setlocale(0, "");    
+
+
+    maain();
+
+    cin.get();
+
     // служебная структура для хранение информации
     // о реализации Windows Sockets
     WSADATA wsaData;
@@ -33,29 +40,29 @@ int main()
     // (подгружается Ws2_32.dll)
     int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-//     // Если произошла ошибка подгрузки библиотеки
-//     if (result != 0) {
-//         cerr << "WSAStartup failed: " << result << "\n";
-//         return result;
-//     }
+    // Если произошла ошибка подгрузки библиотеки
+    if (result != 0) {
+        cerr << "WSAStartup failed: " << result << "\n";
+        return result;
+    }
 
-//     struct addrinfo* addr = NULL; // структура, хранящая информацию
-//     // об IP-адресе  слущающего сокета
+    struct addrinfo* addr = NULL; // структура, хранящая информацию
+    // об IP-адресе  слущающего сокета
 
-//     // Шаблон для инициализации структуры адреса
-//     struct addrinfo hints;
-//     ZeroMemory(&hints, sizeof(hints));
+    // Шаблон для инициализации структуры адреса
+    struct addrinfo hints;
+    ZeroMemory(&hints, sizeof(hints));
 
-//     // AF_INET определяет, что используется сеть для работы с сокетом
-//     hints.ai_family = AF_INET;
-//     hints.ai_socktype = SOCK_STREAM; // Задаем потоковый тип сокета
-//     hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
-//     // Сокет биндится на адрес, чтобы принимать входящие соединения
-//     hints.ai_flags = AI_PASSIVE;
+    // AF_INET определяет, что используется сеть для работы с сокетом
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; // Задаем потоковый тип сокета
+    hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
+    // Сокет биндится на адрес, чтобы принимать входящие соединения
+    hints.ai_flags = AI_PASSIVE;
 
-//     // Инициализируем структуру, хранящую адрес сокета - addr.
-//     // HTTP-сервер будет висеть на 8000-м порту локалхоста
-//     result = getaddrinfo("127.0.0.1", "8000", &hints, &addr);
+    // Инициализируем структуру, хранящую адрес сокета - addr.
+    // HTTP-сервер будет висеть на 8000-м порту локалхоста
+    result = getaddrinfo("127.0.0.1", "8000", &hints, &addr);
 
 //     // Если инициализация структуры адреса завершилась с ошибкой,
 //     // выведем сообщением об этом и завершим выполнение программы 
@@ -185,10 +192,13 @@ int main()
 //     // Убираем за собой
 //     closesocket(listen_socket);
 //     freeaddrinfo(addr);
-//     WSACleanup();
+
+    WSACleanup();
 
 
-    cout << "kak bi variable" << endl;
+    cout << "Любишь русский язык?\n\n\n";
+
+    system("pause");
 
     return 0;
 

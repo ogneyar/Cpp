@@ -113,6 +113,8 @@ int main()
 
     for (;;) {
 
+        std::cout << "Listen port 8000\n";
+
         // Принимаем входящие соединения
         client_socket = accept(listen_socket, NULL, NULL);
         if (client_socket == INVALID_SOCKET) {
@@ -121,9 +123,7 @@ int main()
             WSACleanup();
             return 1;
         }
-
-
-
+    
 
         result = recv(client_socket, buf, max_client_buffer_size, 0);
 

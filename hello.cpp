@@ -18,10 +18,10 @@ using namespace std;
 
 stringstream response;
 
-string set_charset(string charset);
-string set_content_type(string content_type, string charset);
-string set_page_title(string title);
-string h1_text(string text);
+string set_charset(string);
+string set_content_type(string, string);
+string set_page_title(string);
+string h1_text(string);
 
 string string_content;
 string *string_content2;
