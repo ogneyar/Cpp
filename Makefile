@@ -6,3 +6,6 @@ clean:
 
 c:
 	g++ -O3 -s hell.c -o hell.exe
+
+server:
+	g++ -O3 -s server.cpp -o server.exe
