@@ -2,6 +2,7 @@ server:
 	g++ -O3 -s server.cpp -o server.exe -lws2_32
 
 clean:
+	del -f server.exe
 	del -f hello.exe
 	del -f hell.exe
 	del -f ci.exe
