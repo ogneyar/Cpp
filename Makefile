@@ -1,4 +1,4 @@
-server:	
+server:
 	g++ -O3 -s server.cpp -o server.exe -l ws2_32
 
 clean:
@@ -12,4 +12,7 @@ hello:
 
 hell:
 	g++ -O3 -s hell.c -o hell.exe
+
+f:
+	g++ -O3 -s file.cpp -o file.exe
 	

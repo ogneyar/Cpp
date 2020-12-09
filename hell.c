@@ -1,10 +1,10 @@
 #ifdef _WIN64
-#define OS_BIT 64
-#endif // !WIN64
-
-#ifdef _WIN32
-#define OS_BIT 32
-#endif // !WIN32
+    #define OS_BIT 64
+#else
+    #ifdef _WIN32
+    #define OS_BIT 32
+    #endif
+#endif
 
 // #define _CRT_SECURE_NO_WARNINGS // для возможности использования scanf
 #include <stdlib.h> // для перехода на русский язык
