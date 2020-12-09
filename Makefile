@@ -12,6 +12,4 @@ hello:
 
 hell:
 	g++ -O3 -s hell.c -o hell.exe
-
-ci:
-	g++ -O3 -s ci.cpp -o ci.exe -l ws2_32
+	
