@@ -1,5 +1,5 @@
 server:	
-	g++ -O3 -s server.cpp -o server.exe -lws2_32
+	g++ -O3 -s server.cpp -o server.exe -l ws2_32
 
 clean:
 	del -f server.exe
@@ -14,4 +14,4 @@ hell:
 	g++ -O3 -s hell.c -o hell.exe
 
 ci:
-	g++ -O3 -s ci.cpp -o ci.exe -lws2_32
+	g++ -O3 -s ci.cpp -o ci.exe -l ws2_32
