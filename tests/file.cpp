@@ -13,9 +13,9 @@
 
 #include <cstring>
 
-#include "rapidjson/document.h"
-#include "rapidjson/writer.h"
-#include "rapidjson/stringbuffer.h"
+#include <rapidjson/document.h>
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
 
 using namespace std;
 using namespace rapidjson;
@@ -38,7 +38,7 @@ int main() {
 
     // cout << readFile("index.html");
 
-    // cout << readFile("text4.json").c_str();
+    // cout << readFile("text.json").c_str();
 
     rapid();
 
@@ -114,7 +114,7 @@ void rapid() {
     try {
 
         // 1. Parse a JSON string into DOM.
-        string jsonFile = readFile("text3.json");
+        string jsonFile = readFile("text.json");
 
         char szBuf[200];
         // .copy('куда копировать', 'до какого номера символа', ['от какого номера символа'])

@@ -1,5 +1,6 @@
 {
     "index": "index.html",
     "view": "view",
-    "content-type": "text/html"
+    "content-type": "text/html",
+    "port": 8000
 }

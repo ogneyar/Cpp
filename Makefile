@@ -1,4 +1,5 @@
-server:
+
+all:
 	g++ -O3 -s server.cpp -o server.exe -l ws2_32
 
 clean:
@@ -8,11 +9,11 @@ clean:
 	del -f ci.exe
 	
 hello:
-	g++ -O3 -s hello.cpp -o hello.exe
+	g++ -O3 -s tests/hello.cpp -o tests/hello.exe
 
 hell:
-	g++ -O3 -s hell.c -o hell.exe
+	g++ -O3 -s tests/hell.c -o tests/hell.exe
 
 f:
-	g++ -O3 -s file.cpp -o file.exe
+	g++ -O3 -s tests/file.cpp -o tests/file.exe
 	
