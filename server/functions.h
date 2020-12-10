@@ -13,16 +13,37 @@
 using namespace std;
 using namespace rapidjson;
 
-// int server(string);
-// string readFile(string);
-// void parserConfig();
+
+int writeFile(string, string);
+string readFile(string);
+string parserConfig(string);
+bool fileExist(string);
+// const char *strToChar(string);
 
 using namespace std;
 
+
+int writeFile(string file, string text) {
+    // создаём файл и привязываем его к объекту класс ofstream
+    ofstream fout(file);
+    if (!fout.is_open()) {// если файл не открыт
+        cout << "File " << file << " not open for write!\n"; // сообщить об этом
+        return -1;
+    }
+    // делаем запись в файл
+    fout << text;
+    // закрываем файл
+    fout.close();
+    return 0;
+}
+
+
 string readFile(string fileName) {
 
+    int lenBuff = 1024;
+
     // буфер промежуточного хранения считываемого из файла текста
-    char buff[1024]; 
+    char buff[lenBuff]; 
 
     stringstream response;
     
@@ -41,8 +62,8 @@ string readFile(string fileName) {
     
     while (!fin.eof()) {
         // считали строку из файла
-        fin.getline(buff, 1024);
-        // выводим на экран
+        fin.getline(buff, lenBuff);
+        
         response << buff << endl;
     }
     
@@ -60,24 +81,51 @@ string readFile(string fileName) {
 
 string parserConfig(string field) {
 
-    string response;
+    string response = " ";
 
-    string jsonFile = readFile("server.config.json");
+    if (fileExist("server.config.json")) {
+        string jsonFile = readFile("server.config.json");
 
-    char szBuf[1024];
-    // .copy('куда копировать', 'до какого номера символа', ['от какого номера символа'])
-    int nLength = jsonFile.copy(szBuf, jsonFile.length()-1);
-    szBuf[nLength] = '\0'; // завершаем строку в буфере
+        char szBuf[jsonFile.length()];
+        // .copy('куда копировать', 'до какого номера символа', ['от какого номера символа'])
+        int nLength = jsonFile.copy(szBuf, jsonFile.length()-1);
+        szBuf[nLength] = '\0'; // завершаем строку в буфере
+        
+        const char* json = szBuf;
+
+        Document document;
+        document.Parse(json);
+
+        Value& f = document[field.c_str()];
+        response = f.GetString();
+
+    }
+
+    // char szBuf_2[response.length()];
+    // int nLength_2 = response.copy(szBuf_2, response.length());
+    // szBuf_2[nLength_2] = '\0';
     
-    const char* json = szBuf;
-
-    Document document;
-    document.Parse(json);
-
-    Value& f = document[field.c_str()];
-    response = f.GetString();
-
-
+    
     return response;
 
 }
+
+
+bool fileExist(string filePath) {
+    bool isExist = false;
+    ifstream fin(filePath.c_str());
+ 
+    if(fin.is_open())
+        isExist = true;
+ 
+    fin.close();
+    return isExist;
+}
+
+
+// const char *strToChar(string Str) {
+//     char szBuf[Str.length()];
+//     int nLength = Str.copy(szBuf, Str.length());
+//     szBuf[nLength] = '\0';
+//     return szBuf;
+// }

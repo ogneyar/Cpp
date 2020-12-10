@@ -13,11 +13,12 @@ class E { public: void Exception() { cout << "exception" << endl; } };
 
 int main() {
     try{
-        string field = "index";
-        string index = parserConfig(field);
+        string field = "path";
+        string path = parserConfig(field);
 
+        // Server s(nullptr,"8080");
         Server s;
-        s.server(index);
+        s.server(path);
 
     }catch(E e) {
         e.Exception();

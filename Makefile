@@ -17,3 +17,5 @@ hell:
 f:
 	g++ -O3 -s tests/file.cpp -o tests/file.exe
 	
+m:
+	g++ -O3 -s main.c -o main.exe -l wsock32

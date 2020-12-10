@@ -3,6 +3,7 @@
 #include <iostream> // работа вводом/выводом данных
 #include <sstream> // работа со стримами
 #include <string> // работа со строками
+#include <typeinfo> // работа с типами данных
 
 #include "server/functions.h"
 
@@ -21,10 +22,34 @@ using namespace std;
 
 class Server { 
 private:
-    int port;
+    const char *port;
+    const char *host;
 public: 
-    Server() : port(8000) { }
-    Server(int newPort) : port(newPort) { }
+    Server() : host("127.0.0.1"), port("8000") {
+        if (fileExist("server.config.json")) {
+
+            string hostString = parserConfig("host");
+            char szBuf[hostString.length()];
+            int nLength = hostString.copy(szBuf, hostString.length());
+            szBuf[nLength] = '\0';
+            // host = strToChar(hostString);
+            host = szBuf;
+            
+            string portString = parserConfig("port");
+            char szBuf_2[portString.length()];
+            int nLength_2 = portString.copy(szBuf_2, portString.length());
+            szBuf_2[nLength_2] = '\0';
+
+            port = szBuf_2;
+
+        }else {
+            string text = "{\n    \"path\": \"index.html\",\n    \"view\": \"view\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
+            writeFile("server.config.json", text);
+        }
+        
+     }
+    Server(const char *newHost, const char *newPort) : host(newHost), port(newPort) { }
+
 
     // int server(string);
 int server(string fileName) {
@@ -57,8 +82,9 @@ int server(string fileName) {
     hints.ai_flags = AI_PASSIVE;
 
     // Инициализируем структуру, хранящую адрес сокета - addr.
-    // HTTP-сервер будет висеть на 8000-м порту локалхоста
-    result = getaddrinfo("127.0.0.1", "8000", &hints, &addr);
+    // HTTP-сервер будет висеть на заданном порту заданного хоста
+    result = getaddrinfo(host, port, &hints, &addr);
+    // result = getaddrinfo("127.0.0.1", "8000", &hints, &addr);
 
     // Если инициализация структуры адреса завершилась с ошибкой,
     // выведем сообщением об этом и завершим выполнение программы 
@@ -121,7 +147,7 @@ int server(string fileName) {
 
     for (;;) {
 
-        cout << "Listen port 8000\n";
+        cout << "Listen port " << port << "\n";
 
         // Принимаем входящие соединения
         client_socket = accept(listen_socket, NULL, NULL);
