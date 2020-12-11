@@ -13,9 +13,10 @@
 
 #include <cstring>
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
+#include "../include/rapidjson/document.h"
+#include "../include/rapidjson/writer.h"
+#include "../include/rapidjson/stringbuffer.h"
+
 
 using namespace std;
 using namespace rapidjson;
@@ -41,6 +42,7 @@ int main() {
     // cout << readFile("text.json").c_str();
 
     rapid();
+  
 
     cout << endl;
     system("pause");

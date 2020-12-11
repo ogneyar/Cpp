@@ -5,7 +5,7 @@
 #include <sstream> // работа со стримами
 #include <string> // работа со строками
 
-#include "server.h"
+#include "include/rex/rex.server.h"
 
 using namespace std;
 
@@ -17,8 +17,8 @@ int main() {
         string path = parserConfig(field);
 
         // Server s(nullptr,"8080");
-        Server s;
-        s.server(path);
+        Server rex;
+        rex.run(path); 
 
     }catch(E e) {
         e.Exception();

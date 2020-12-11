@@ -6,9 +6,9 @@
 
 #include <cstring> // работа со строками (strlen)
 
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
+#include "../rapidjson/document.h"
+#include "../rapidjson/writer.h"
+#include "../rapidjson/stringbuffer.h"
 
 using namespace std;
 using namespace rapidjson;
@@ -16,7 +16,9 @@ using namespace rapidjson;
 
 int writeFile(string, string);
 string readFile(string);
+string parserFile(string, string);
 string parserConfig(string);
+string parserJSON(string, string);
 bool fileExist(string);
 // const char *strToChar(string);
 
@@ -39,75 +41,55 @@ int writeFile(string file, string text) {
 
 
 string readFile(string fileName) {
-
     int lenBuff = 1024;
-
     // буфер промежуточного хранения считываемого из файла текста
-    char buff[lenBuff]; 
-
+    char buff[lenBuff];
     stringstream response;
-    
     // открыли файл для чтения
     ifstream fin(fileName);
-    
     if (!fin.is_open()) {// если файл не открыт
         response << "File " << fileName << " not open for read!\n"; // сообщить об этом
         return response.str();
     }
-
-    // считали первое слово из файла
-    // fin >> buff; 
-    // выводим на экран
-    // cout << buff << endl;
-    
     while (!fin.eof()) {
         // считали строку из файла
         fin.getline(buff, lenBuff);
-        
         response << buff << endl;
     }
-    
     // закрываем файл
-    fin.close(); 
-
-    // cout << response.str() << endl;
-    
-    //Освобождаем буффер
-    // delete [] buff;
-
+    fin.close();
     return response.str();
 }
 
 
-string parserConfig(string field) {
-
+string parserFile(string file, string field) {
     string response = " ";
-
-    if (fileExist("server.config.json")) {
-        string jsonFile = readFile("server.config.json");
-
-        char szBuf[jsonFile.length()];
-        // .copy('куда копировать', 'до какого номера символа', ['от какого номера символа'])
-        int nLength = jsonFile.copy(szBuf, jsonFile.length()-1);
-        szBuf[nLength] = '\0'; // завершаем строку в буфере
-        
-        const char* json = szBuf;
-
-        Document document;
-        document.Parse(json);
-
-        Value& f = document[field.c_str()];
-        response = f.GetString();
-
-    }
-
-    // char szBuf_2[response.length()];
-    // int nLength_2 = response.copy(szBuf_2, response.length());
-    // szBuf_2[nLength_2] = '\0';
-    
-    
+    if (fileExist(file)) {
+        string jsonFile = readFile(file);
+        response = parserJSON(jsonFile, field);
+    }    
     return response;
+}
 
+
+string parserConfig(string field) {    
+    return parserFile("server.config.json", field);
+}
+
+
+string parserJSON(string json_str, string field) {
+    char szBuf[json_str.length()];
+    // .copy('куда копировать', 'до какого номера символа', ['от какого номера символа'])
+    int nLength = json_str.copy(szBuf, json_str.length()-1);
+    szBuf[nLength] = '\0'; // завершаем строку в буфере
+    
+    const char* json = szBuf;
+
+    Document document;
+    document.Parse(json);
+
+    Value& f = document[field.c_str()];
+    return f.GetString();
 }
 
 
