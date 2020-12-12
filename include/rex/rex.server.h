@@ -23,37 +23,48 @@ using namespace std;
 
 class Server { 
 private:
+    string view;
     const char *port;
     const char *host;
 public: 
-    Server() : host("127.0.0.1"), port("8000") {
+    Server() : host("127.0.0.1"), port("8000"), view("html") {
+    
         if (fileExist("server.config.json")) {
+            
+            int nLength;
+            string fieldString;
 
-            string hostString = parserConfig("host");
-            char szBuf[hostString.length()];
-            int nLength = hostString.copy(szBuf, hostString.length());
-            szBuf[nLength] = '\0';
-            // host = strToChar(hostString);
+            fieldString = parserConfig("host");
+            char szBuf[fieldString.length()];    
+            nLength = fieldString.copy(szBuf, fieldString.length());
+            szBuf[nLength] = '\0';            
             host = szBuf;
             
-            string portString = parserConfig("port");
-            char szBuf_2[portString.length()];
-            int nLength_2 = portString.copy(szBuf_2, portString.length());
-            szBuf_2[nLength_2] = '\0';
-
+            fieldString = parserConfig("port");
+            char szBuf_2[fieldString.length()];
+            nLength = fieldString.copy(szBuf_2, fieldString.length());
+            szBuf_2[nLength] = '\0';
             port = szBuf_2;
 
+            view = parserConfig("view");
+
         }else {
-            string text = "{\n    \"path\": \"index.html\",\n    \"view\": \"view\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
+            string text = "{\n    \"path\": \"index.html\",\n    \"view\": \"html\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
             writeFile("server.config.json", text);
         }
         
-     }
-    Server(const char *newHost, const char *newPort) : host(newHost), port(newPort) { }
-
+    }
+    // Server(const char *newHost) : host(newHost) { }
+    // Server(const char *newHost, const char *newPort) : host(newHost), port(newPort) { }
+    Server(
+        const char *newHost, 
+        const char *newPort, 
+        string newView
+        ) : host(newHost), port(newPort), view(newView) { }
+   
 
     // int run(string);
-    // string getRequest(char[]);
+    // string getRequest(char);
 
     int run(string fileName) {
         // служебная структура для хранение информации
@@ -198,10 +209,14 @@ public:
 
                     // Данные успешно получены
                     // формируем тело ответа (HTML)
-                    if (path[0] == '/')
-                        response_body << readFile(fileName);
-                    else
-                        response_body << "<h1>Страница не найдена</h1>";
+                    // string view = parserConfig("view");
+                    if (path == "/")
+                        response_body << readFile(view+"/"+fileName);
+                    else if (path == "/test" || path == "/test/") {
+                        // response_body << "<center><h1>Тестовая страница</h1></center>";
+                        response_body << readFile("html/test.html");
+                    }else
+                        response_body << "<center><h1>Страница не найдена</h1></center>";
 
 
                     // Формируем весь ответ вместе с заголовками

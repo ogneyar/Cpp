@@ -1,6 +1,6 @@
 {
     "path": "index.html",
-    "view": "view",
+    "view": "html",
     "content-type": "text/html",
     "host": "127.0.0.1",
     "port": "8000"

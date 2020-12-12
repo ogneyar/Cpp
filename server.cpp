@@ -13,19 +13,19 @@ class E { public: void Exception() { cout << "exception" << endl; } };
 
 int main() {
     try{
-        string field = "path";
-        string path = parserConfig(field);
-
-        // Server s(nullptr,"8080");
-        Server rex;
-        rex.run(path); 
+        // nullptr - пустая строка
+        string path = parserConfig("path");       
+        
+        Server rex; // rex берёт настройки из server.config.json
+        // можно и так подключить
+        // Server rex("localhost","8080", "view"); 
+        rex.run(path); // старт сервера
 
     }catch(E e) {
         e.Exception();
     }
 
-    // E e;
-    // e.Exception();
+   
 
     return 0;
 }

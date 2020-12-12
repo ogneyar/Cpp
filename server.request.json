@@ -4,15 +4,13 @@
     "http": "HTTP/1.1",
     "Host": "127.0.0.1:8000",
     "Connection": "keep-alive",
-    "Pragma": "no-cache",
-    "Cache-Control": "no-cache",
-    "Save-Data": "on",
-    "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.185 YaBrowser/20.11.2.80 Yowser/2.5 Safari/537.36",
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.400",
     "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
     "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-Mode": "no-cors",
     "Sec-Fetch-Dest": "image",
     "Referer": "http://127.0.0.1:8000/",
     "Accept-Encoding": "gzip, deflate, br",
-    "Accept-Language": "ru,en;q=0.9"
+    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Cookie": "csrftoken=2V6MuFJ0bwRMaEByBiow90g2Gs8WZUpcpVTWKbLO8XRnWk7HeQNLGWlXgtzhrIt3; login=%D0%9E%D0%B3%D0%BD%D0%B5%D1%8F%D1%80; token=777; PHPSESSID=4v4vognfqmd249o7aun0048pb3"
 }
