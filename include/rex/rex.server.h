@@ -10,7 +10,7 @@
 
 // Для корректной работы freeaddrinfo в MinGW
 // Подробнее: http://stackoverflow.com/a/20306451
-#define _WIN32_WINNT 0x501 
+// #define _WIN32_WINNT 0x501 
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -23,9 +23,10 @@ using namespace std;
 
 class Server { 
 private:
-    string view;
-    const char *port;
     const char *host;
+    const char *port;    
+    string view;
+
 public: 
     Server() : host("127.0.0.1"), port("8000"), view("html") {
     
@@ -35,21 +36,24 @@ public:
             string fieldString;
 
             fieldString = parserConfig("host");
+            if (fieldString == "Error") fieldString = "127.0.0.1";
             char szBuf[fieldString.length()];    
             nLength = fieldString.copy(szBuf, fieldString.length());
             szBuf[nLength] = '\0';            
             host = szBuf;
             
             fieldString = parserConfig("port");
+            if (fieldString == "Error") fieldString = "8000";
             char szBuf_2[fieldString.length()];
             nLength = fieldString.copy(szBuf_2, fieldString.length());
             szBuf_2[nLength] = '\0';
             port = szBuf_2;
 
             view = parserConfig("view");
+            if (view == "Error") view = "html";
 
         }else {
-            string text = "{\n    \"path\": \"index.html\",\n    \"view\": \"html\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
+            string text = "{\n    \"view\": \"html\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
             writeFile("server.config.json", text);
         }
         
@@ -63,10 +67,10 @@ public:
         ) : host(newHost), port(newPort), view(newView) { }
    
 
-    // int run(string);
+    // int run();
     // string getRequest(char);
 
-    int run(string fileName) {
+    int run() {
         // служебная структура для хранение информации
         // о реализации Windows Sockets
         WSADATA wsaData;
@@ -147,8 +151,8 @@ public:
         }
 
     
-        cout << "Starting rex server...\n";
-        cout << "Listen port: " << port << ". ";
+        cout << "Server rex hes been started on " << host << ".\n";
+        cout << "Listen port " << port << "... ";
 
         const int max_client_buffer_size = 2048;
         char buf[max_client_buffer_size];
@@ -157,7 +161,7 @@ public:
 
         for (;;) {
 
-            // cout << "Listen port " << port << "\n";
+
 
             // Принимаем входящие соединения
             client_socket = accept(listen_socket, NULL, NULL);
@@ -194,30 +198,37 @@ public:
                 // и сохраняем в файл (почему-то пока только с файлом работает rapidjson)
                 writeFile("server.request.json", json);
 
-                string field = "path"; // запрашиваем поле path (путь в адресной строке браузера)
-                string path = parserFile("server.request.json", field);
+                // запрашиваем поле path (путь в адресной строке браузера)
+                string path = parserFile("server.request.json", "path");                
+
+
+                // буфер для перевода string в массив char
+                char pathBuf[path.length()];                
+                int pathLength = path.copy(pathBuf, path.length());
+                // если в конце адреса нет слеша, то добавляем
+                if (pathBuf[pathLength-1] != '/') path = path + "/";
+               
                 
-                field = "method"; // запрашиваем поле method (GET PUT POST...)
-                string method = parserFile("server.request.json", field);
+                // запрашиваем поле method (GET PUT POST...)
+                string method = parserFile("server.request.json", "method");
                 
                 
-                if (path != "/favicon.ico") {
+                if (path != "/favicon.ico/") {
                     // в консоли выводим сообщение, кроме когда браузером запрашивается иконка
                     cout << "Request method: " << method << " " << path << "\n";
-                    cout << "Listen port: " << port << ". ";
-
-
+                    
                     // Данные успешно получены
                     // формируем тело ответа (HTML)
-                    // string view = parserConfig("view");
-                    if (path == "/")
-                        response_body << readFile(view+"/"+fileName);
-                    else if (path == "/test" || path == "/test/") {
-                        // response_body << "<center><h1>Тестовая страница</h1></center>";
-                        response_body << readFile("html/test.html");
-                    }else
-                        response_body << "<center><h1>Страница не найдена</h1></center>";
+                    string route = parserFile("routes/route.json", path);
+                    if (route != "Error") response_body << readFile(view+"/"+route);
+                    else {
+                        response_body << "<br><br><center>";
+                        response_body << "<h1>Error 404. Page not found.</h1>";
+                        response_body << "</center><br><smal>Server rex.</smal>";
+                        response_body << "<br><hr>";
+                    }                        
 
+                    cout << "Listen port " << port << "... ";               
 
                     // Формируем весь ответ вместе с заголовками
                     response << "HTTP/1.1 200 OK\r\n"
@@ -235,6 +246,7 @@ public:
                         // произошла ошибка при отправле данных
                         cerr << "send failed: " << WSAGetLastError() << "\n";
                     }
+                    
                 }
 
                 // Закрываем соединение к клиентом

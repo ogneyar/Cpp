@@ -10,6 +10,9 @@
 #include "../rapidjson/writer.h"
 #include "../rapidjson/stringbuffer.h"
 
+#include <exception> // исключения
+// #include <stdexcept> // исключения
+
 using namespace std;
 using namespace rapidjson;
 
@@ -62,13 +65,11 @@ string readFile(string fileName) {
 }
 
 
-string parserFile(string file, string field) {
-    string response = " ";
+string parserFile(string file, string field) {    
     if (fileExist(file)) {
-        string jsonFile = readFile(file);
-        response = parserJSON(jsonFile, field);
+        return parserJSON(readFile(file), field);
     }    
-    return response;
+    return "Error";
 }
 
 
@@ -84,12 +85,19 @@ string parserJSON(string json_str, string field) {
     szBuf[nLength] = '\0'; // завершаем строку в буфере
     
     const char* json = szBuf;
+    try {
+        Document document;
+        document.Parse(json);
+        if (document.HasMember(field.c_str())) {
+            // Value& f = document[field.c_str()];
+            // return f.GetString();
+            return document[field.c_str()].GetString();
+        }else throw runtime_error("Error, not key in JSON");
 
-    Document document;
-    document.Parse(json);
-
-    Value& f = document[field.c_str()];
-    return f.GetString();
+    }catch (runtime_error e) {
+        cout << "Exception! " << e.what() << endl;
+    }
+    return "Error";
 }
 
 

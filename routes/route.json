@@ -1,4 +1,5 @@
 {
     "/": "index.html",
-    "/test/": "test.html"
+    "/test/": "test.html",
+    "/temp/": "temp.html"
 }
