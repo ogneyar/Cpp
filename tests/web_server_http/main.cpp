@@ -2,9 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <netdb.h>
+// #include <netdb.h>
 #include <time.h>
-#include <sys/socket.h>
+// #include <sys/socket.h>
+// #include <netinet/in.h>
+#include <fcntl.h>
+
+#include <winsock2.h>
+#include <WS2tcpip.h>
+#pragma comment( lib, "Ws2_32.lib" )
 
 // http://localhost:8000
 
@@ -64,7 +70,7 @@ typedef struct
   char        path[255];
 }sHTTPHeader;
 
-void *get_client_addr(struct sockaddr *);
+// void *get_client_addr(struct sockaddr *);
 int create_socket(const char *);
 
 void http_request(int);
@@ -75,6 +81,10 @@ void send_404(int);
 
 int main()
 {
+
+  WSADATA wsaData;
+  int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
+
   int sock;
 
   sock = create_socket(SERVER_PORT);
@@ -100,44 +110,52 @@ int main()
       return -1;
     }
 
-    char ip[INET6_ADDRSTRLEN];
-    inet_ntop(client_addr.ss_family, get_client_addr((struct sockaddr *)&client_addr), ip, sizeof ip);
-    printf("server: got connection from %s\n", ip);
+    // char ip[INET6_ADDRSTRLEN];
+    // inet_ntop(client_addr.ss_family, get_client_addr((struct sockaddr *)&client_addr), ip, sizeof ip);
+    // printf("server: got connection from %s\n", ip);
 
     // read
     http_request(client_d);
 
-    close(client_d);
+    closesocket(client_d);
+    
   }
+  WSACleanup();
 
   return 0;
 }
 
 
-void *get_client_addr(struct sockaddr *sa)
-{
-  if (sa->sa_family == AF_INET)
-  {
-    return &(((struct sockaddr_in*)sa)->sin_addr);
-  }
+// void *get_client_addr(struct sockaddr *sa)
+// {
+//   if (sa->sa_family == AF_INET)
+//   {
+//     return &(((struct sockaddr_in*)sa)->sin_addr);
+//   }
 
-  return &(((struct sockaddr_in6*)sa)->sin6_addr);
-}
+//   return &(((struct sockaddr_in6*)sa)->sin6_addr);  
+// }
 
 int create_socket(const char *apstrPort)
 {
+  
   struct addrinfo hints;
-  struct addrinfo *servinfo;
+  struct addrinfo *servinfo = NULL;
   struct addrinfo *p;
 
-  memset(&hints, 0, sizeof(hints));
+  // memset(&hints, 0, sizeof(hints));
+  ZeroMemory(&hints, sizeof(hints));
 
   // IPv4 or IPv6
-  hints.ai_family   = AF_UNSPEC;
+  // hints.ai_family   = AF_UNSPEC;
+  hints.ai_family = AF_INET;
   hints.ai_socktype = SOCK_STREAM;
+
+  hints.ai_protocol = IPPROTO_TCP;
+
   hints.ai_flags    = AI_PASSIVE;
 
-  int r = getaddrinfo(NULL, apstrPort, &hints, &servinfo);
+  int r = getaddrinfo("127.0.0.1", "8000", &hints, &servinfo);
   if( r != 0)
   {
     fprintf(stderr, "error getaddrinfo()\n");
@@ -145,7 +163,7 @@ int create_socket(const char *apstrPort)
   }
 
   int sock;
-  int yes;
+  const char yes = NULL;
   for(p = servinfo; p != NULL; p = p->ai_next)
   {
     sock = socket(p->ai_family, p->ai_socktype, p->ai_protocol);
@@ -155,14 +173,16 @@ int create_socket(const char *apstrPort)
     if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int)) == -1)
     {
       fprintf(stderr, "error setsockopt\n");
-      close(sock);
+      closesocket(sock);
       freeaddrinfo(servinfo); // all done with this structure
+      WSACleanup();
       return -2;
     }
 
     if(bind(sock, p->ai_addr, p->ai_addrlen) == -1)
     {
-      close(sock);
+      WSACleanup();
+      closesocket(sock);
       continue;
     }
     break;
@@ -207,7 +227,7 @@ void http_request(int aSock)
 
   if(req.type == eHTTP_GET)
   {
-    send_message(aSock, "sensor 1: 10<br> sensor 2: 20<br><a href=\"http://cppprosto.blogspot.com/2017/09/blog-post_23.html\">external</a><br><a href=\"internal\">internal</a>");
+    send_message(aSock, "sensor 1: 10<br> sensor 2: 20<br>");
   }
   else
   {
@@ -241,9 +261,15 @@ void send_message(int aSock, const char *apstrMessage)
   char buffer[65536] = { 0 };
 
   strcat(buffer, "HTTP/1.1 200 OK\n\n");
-  strcat(buffer, "<h1>");
+  // strcat(buffer, "<center>");
+  strcat(buffer, "<br>");
+  strcat(buffer, "<br>");
+  strcat(buffer, "<h1>");  
   strcat(buffer, apstrMessage);
   strcat(buffer, "</h1>");
+  // strcat(buffer, "</center>");
+  strcat(buffer, "<br>");
+  strcat(buffer, "<hr>");
 
   int len = strlen(buffer);
   send(aSock, buffer, len, 0);

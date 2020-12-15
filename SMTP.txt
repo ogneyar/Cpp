@@ -1,0 +1,14 @@
+telnet smtp.yandex.ru 2025
+EHLO 91.198.212.5
+AUTH LOGIN
+ВАШ_ЛОГИН_ПОЧТЫ_В_BASE_64
+ВАШ_ПАРОЛЬ_ПОЧТЫ_В_BASE_64
+MAIL FROM: vasiapupkin@ya.ru
+RCPT TO: billy@microsoft.com
+DATA
+From: Вася Пупкин <vasiapupkin@ya.ru>
+To: Билли Г <billy@microsoft.com>
+Subject: Hello Billy
+Hello, Billy! You will be die tomorrow!
+Энтер . Энтер
+QUIT

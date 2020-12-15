@@ -29,7 +29,7 @@ class E { public: void Exception() { cout << "exception" << endl; } };
 
 
 int main() {
-    // корректное отображение Кириллицы (не работает)
+    // корректное отображение Кириллицы
     setlocale(LC_ALL, "Russian");
     wcout << L"Привет, мир!" << endl << endl;
 

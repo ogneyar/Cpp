@@ -1,9 +1,7 @@
 #include <pthread.h> 
-
 #include <sys/types.h> 
-#include <stdio.h>
-
-#include <unistd.h>
+#include <stdio.h> 
+#include <unistd.h> // sleep()
 
 #include "fcgi_config.h" 
 #include "fcgiapp.h" 
@@ -69,7 +67,6 @@ static void *doit(void *a)
 
         //"заснуть" - имитация многопоточной среды 
         sleep(2); 
-        // delay(2000); 
 
         //закрыть текущее соединение 
         FCGX_Finish_r(&request); 
