@@ -17,6 +17,7 @@
 using namespace std;
 
 stringstream response;
+stringstream response_body;
 
 string set_charset(string);
 string set_content_type(string, string);
@@ -27,24 +28,13 @@ string string_content;
 string *string_content2;
 
 int main() {
+     
+  // response << "-= C++ =-  " << "win" << OS_BIT << "\r\n\r\n" << "HTTP/1.1 200 OK\r\n"  
+  //   << "Version: HTTP/1.1\r\n"
+  //   // задаём тип контента и кодировку
+  //   << set_content_type("text/html", "utf-8")
 
-  // string_content = "text/html";
-  // string_content2 = &string_content;
-
-  // cout << endl;
-  // cout << "content_type: " << string_content << endl;
-  // cout << "&content_type: " << &string_content << endl;
-  // cout << endl;
-
-  // cout << endl;
-  // cout << "content_type2: " << string_content2 << endl;
-  // cout << "&content_type2: " << *string_content2 << endl;
-  // cout << endl;
-
-  response << "-= C++ =-  " << "win" << OS_BIT << "\r\n\r\n" << "HTTP/1.1 200 OK\r\n"
-    << "Version: HTTP/1.1\r\n"
-    // задаём тип контента и кодировку
-    << set_content_type("text/html", "utf-8")
+  response_body
     << "<!DOCTYPE html>\n"
     << "<html lang=\"ru\">\n"
     << "<head>\n"
@@ -54,6 +44,13 @@ int main() {
     // задаём текст заголовка
     << h1_text("Hell o World!")
     << "</body>\n" << "</html>";
+
+  response << "HTTP/1.1 200 OK\r\n"
+    << "Version: HTTP/1.1\r\n"
+    << "Content-Type: text/html; charset=utf-8\r\n"
+    << "Content-Length: " << response_body.str().length()
+    << "\r\n\r\n"
+    << response_body.str();
 
   cout << response.str().c_str();
 

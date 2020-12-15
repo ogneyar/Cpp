@@ -1,4 +1,4 @@
-#ifdef _WIN64
+﻿#ifdef _WIN64
     #define OS_BIT 64
 #else
     #ifdef _WIN32
@@ -31,7 +31,7 @@ class E { public: void Exception() { cout << "exception" << endl; } };
 int main() {
     // корректное отображение Кириллицы (не работает)
     setlocale(LC_ALL, "Russian");
-    cout << "Пиши по РУССКИ!\n\n";
+    wcout << L"Привет, мир!" << endl << endl;
 
     cout << "win" << OS_BIT << "\n\n";
 

@@ -14,12 +14,10 @@ class E { public: void Exception() { cout << "exception" << endl; } };
 int main() {
     try{
 
-                
         Server rex; // rex берёт настройки из server.config.json
         // можно и так подключить
         // Server rex("localhost","8080", "view"); 
         rex.run(); // старт сервера
-        
 
     }catch(E e) {
         e.Exception();

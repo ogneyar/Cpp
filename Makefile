@@ -9,7 +9,7 @@ clean:
 	del -f ci.exe
 	
 hello:
-	g++ -O3 -s tests/hello.cpp -o tests/hello.exe
+	g++ -O3 -s tests/hello.cpp -o tests/hello.cgi
 
 hell:
 	g++ -O3 -s tests/hell.c -o tests/hell.exe
@@ -19,3 +19,9 @@ f:
 	
 m:
 	g++ -O3 -s main.c -o main.exe -l wsock32
+
+fcgi:
+	g++ -O3 -s tests/FastCGI.cpp -o tests/FastCGI.exe -l fcgi -l pthread
+
+test:
+	gcc -O3 -s test.cpp -o test.exe -lpthread

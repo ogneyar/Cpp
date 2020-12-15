@@ -102,6 +102,7 @@ public:
         // Инициализируем структуру, хранящую адрес сокета - addr.
         // HTTP-сервер будет висеть на заданном порту заданного хоста
         result = getaddrinfo(host, port, &hints, &addr);
+        // result = getaddrinfo("0.0.0.0", port, &hints, &addr);
         // result = getaddrinfo("127.0.0.1", "8000", &hints, &addr);
 
         // Если инициализация структуры адреса завершилась с ошибкой,
@@ -236,7 +237,7 @@ public:
                         << "Content-Type: text/html; charset=utf-8\r\n"
                         << "Content-Length: " << response_body.str().length()
                         << "\r\n\r\n"
-                        << response_body.str();
+                        << response_body.str(); 
 
                     // Отправляем ответ клиенту с помощью функции send
                     result = send(client_socket, response.str().c_str(),
