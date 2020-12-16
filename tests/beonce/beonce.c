@@ -177,7 +177,7 @@ void WriteTitle(int ThreadNum)
     {
         sizeOfNThreadMsg = 120
     };
-    wchar_t    NThreadMsg[sizeOfNThreadMsg] = { L"" };
+    wchar_t    NThreadMsg[sizeOfNThreadMsg] = { 0 };
 
     swprintf_s(NThreadMsg, sizeOfNThreadMsg,
         L"Threads running: %02d.  Press 'A' "

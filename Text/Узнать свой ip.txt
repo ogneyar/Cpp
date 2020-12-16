@@ -1,0 +1,110 @@
+	
+ 
+Как получить свой IP
+Вариант 1
+
+Данная статья показывает, как можно определить свой IP (имеется в виду IPv4).
+Начнем сразу с кода:
+DWORD GetCurentIP()
+{
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(1,1), &wsaData); // инициализируем socket'ы используя Ws2_32.dll для процесса
+
+    char HostName[1024]; // создаем буфер для имени хоста
+    DWORD m_HostIP = 0;
+
+    if(!gethostname(HostName, 1024)) // получаем имя хоста
+    {
+        if(LPHOSTENT lphost = gethostbyname(HostName)) // получаем IP хоста, т.е. нашего компа
+            m_HostIP = ((LPIN_ADDR)lphost->h_addr)->s_addr; // преобразуем переменную типа LPIN_ADDR в DWORD
+    }
+    WSACleanup(); // освобождаем сокеты, т.е. завершаем использование Ws2_32.dll
+    return m_HostIP;
+}
+Если требуется создать строку из IP, то код будет выглядеть вот так:
+DWORD GetCurentIP(LPSTR lpStringWithIP = 0)
+// lpStringWithIP - поинтер на массив, состоящий из 17 символов
+{
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(1,1), &wsaData); // инициализируем socket'ы используя Ws2_32.dll для процесса
+
+    char HostName[1024]; // создаем буфер для имени хоста
+    DWORD m_HostIP = 0;
+
+    if(!gethostname(HostName, 1024)) // получаем имя хоста
+    {
+        if(LPHOSTENT lphost = gethostbyname(HostName)) // получаем IP хоста, т.е. нашего компа
+            m_HostIP = ((LPIN_ADDR)lphost->h_addr)->s_addr; // преобразуем переменную типа LPIN_ADDR в DWORD
+    }
+    WSACleanup(); // освобождаем сокеты, т.е. завершаем использование Ws2_32.dll
+
+    if (lpStringWithIP) // если поинтер на строку не нулевой
+        strcpy(lpStringWithIP, inet_ntoa(*((in_addr*)lphost->h_addr_list[0]))); // то преобразуем IP в строку
+
+    return m_HostIP;
+}
+Если надо получить сами числа, то код будет такой:
+DWORD GetCurentIP(BYTE a1, BYTE a2, BYTE a3, BYTE a4)
+// BYTE a1, BYTE a2, BYTE a3, BYTE a4 - биты адреса IP
+{
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(1,1), &wsaData); // инициализируем socket'ы используя Ws2_32.dll для процесса
+
+    char HostName[1024]; // создаем буфер для имени хоста
+    DWORD m_HostIP = 0;
+
+    if(!gethostname(HostName, 1024)) // получаем имя хоста
+    {
+        if(LPHOSTENT lphost = gethostbyname(HostName)) // получаем IP хоста, т.е. нашего компа
+            m_HostIP = ((LPIN_ADDR)lphost->h_addr)->s_addr; // преобразуем переменную типа LPIN_ADDR в DWORD
+    }
+    WSACleanup(); // освобождаем сокеты, т.е. завершаем использование Ws2_32.dll
+
+    a1=((LPIN_ADDR)lphost->h_addr)->s_b1; // присваиваем значение 1-го байта адреса
+    a2=((LPIN_ADDR)lphost->h_addr)->s_b2; // присваиваем значение 2-го байта адреса
+    a3=((LPIN_ADDR)lphost->h_addr)->s_b3; // присваиваем значение 3-го байта адреса
+    a4=((LPIN_ADDR)lphost->h_addr)->s_b4; // присваиваем значение 4-го байта адреса
+
+    /* // или можно еще так
+    a1=lphost->h_addr_list[0];
+    a2=lphost->h_addr_list[1];
+    a3=lphost->h_addr_list[2];
+    a4=lphost->h_addr_list[3]; */
+
+    return m_HostIP;
+}
+Вариант 2
+
+Для компов с множественными интерфейсами:
+#include <stdio.h>
+#include <winsock2.h>
+
+void main()
+{
+    WSADATA wsaData;
+    if (!WSAStartup(WINSOCK_VERSION, &wsaData))
+    {
+        char chInfo[64];
+        if (!gethostname(chInfo,sizeof(chInfo)))
+        {
+            hostent *sh;
+            sh=gethostbyname((char*)&chInfo);
+            if (sh!=NULL)
+            {
+                int   nAdapter = 0;
+                while (sh->h_addr_list[nAdapter])
+                {
+                    struct   sockaddr_in   adr;
+                    memcpy(&adr.sin_addr,sh->h_addr_list[nAdapter],sh->h_length);
+                    printf("IP is: %s\n",inet_ntoa(adr.sin_addr));
+                    nAdapter++;
+                }
+            }
+        }
+    }
+    else
+        printf("Winsock Error!\n");
+
+    WSACleanup();
+    return;
+}
