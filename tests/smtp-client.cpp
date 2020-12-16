@@ -61,9 +61,7 @@ int main()
  // подтверждение
 
  // сообщаем отправителя
- strcpy(text,"MAIL FROM: 
- Этот e-mail защищен от спам-ботов. Для его просмотра в вашем браузере должна быть включена поддержка Java-script
- ");
+ strcpy(text,"MAIL FROM: ya13th@mail.ru");
  send(s,text,strlen(text),0);
  printf("send - %s", text);
 
@@ -72,9 +70,7 @@ int main()
  printf("recv - %s", text);
 
  // сообщаем получателя
- strcpy(text,"RCPT TO: 
- Этот e-mail защищен от спам-ботов. Для его просмотра в вашем браузере должна быть включена поддержка Java-script
- ");
+ strcpy(text,"RCPT TO: ya13th@mail.ru");
  send(s,text,strlen(text),0);
  printf("send - %s", text);
 
@@ -94,16 +90,12 @@ int main()
  // передаем заголовок
 
  // от кого письмо
- strcpy(text,"FROM: 
- Этот e-mail защищен от спам-ботов. Для его просмотра в вашем браузере должна быть включена поддержка Java-script
- ");
+ strcpy(text,"FROM: ya13th@mail.ru");
  send(s,text,strlen(text),0);
  printf("send - %s", text);
 
  // кому письмо
- strcpy(text,"TO: 
- Этот e-mail защищен от спам-ботов. Для его просмотра в вашем браузере должна быть включена поддержка Java-script
- ");
+ strcpy(text,"TO: ya13th@mail.ru");
  send(s,text,strlen(text),0);
  printf("send - %s", text);
  
