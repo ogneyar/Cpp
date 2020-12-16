@@ -89,9 +89,9 @@ string parserJSON(string json_str, string field) {
         Document document;
         document.Parse(json);
         if (document.HasMember(field.c_str())) {
-            // Value& f = document[field.c_str()];
-            // return f.GetString();
+
             return document[field.c_str()].GetString();
+
         }else throw runtime_error("Error, not key in JSON");
 
     }catch (runtime_error e) {
@@ -111,11 +111,3 @@ bool fileExist(string filePath) {
     fin.close();
     return isExist;
 }
-
-
-// const char *strToChar(string Str) {
-//     char szBuf[Str.length()];
-//     int nLength = Str.copy(szBuf, Str.length());
-//     szBuf[nLength] = '\0';
-//     return szBuf;
-// }

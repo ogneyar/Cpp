@@ -6,6 +6,8 @@
 #include <cstring> // работа с символами (char)
 #include <typeinfo> // работа с типами данных
 
+#include <dir.h> // работа с директориями
+
 #include "rex.functions.h"
 
 // Для корректной работы freeaddrinfo в MinGW
@@ -53,8 +55,7 @@ public:
             if (view == "Error") view = "html";
 
         }else {
-            string text = "{\n    \"view\": \"html\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
-            writeFile("server.config.json", text);
+            Server::createConfigFiles();            
         }
         
     }
@@ -162,8 +163,6 @@ public:
 
         for (;;) {
 
-
-
             // Принимаем входящие соединения
             client_socket = accept(listen_socket, NULL, NULL);
             if (client_socket == INVALID_SOCKET) {
@@ -200,7 +199,7 @@ public:
                 writeFile("server.request.json", json);
 
                 // запрашиваем поле path (путь в адресной строке браузера)
-                string path = parserFile("server.request.json", "path");                
+                string path = parserFile("server.request.json", "path");   
 
 
                 // буфер для перевода string в массив char
@@ -217,12 +216,28 @@ public:
                 if (path != "/favicon.ico/") {
                     // в консоли выводим сообщение, кроме когда браузером запрашивается иконка
                     cout << "Request method: " << method << " " << path << "\n";
-                    
+                                    
+
                     // Данные успешно получены
                     // формируем тело ответа (HTML)
-                    string route = parserFile("routes/route.json", path);
-                    if (route != "Error") response_body << readFile(view+"/"+route);
-                    else {
+                    string route = Server::getRoutes(path);
+                    // string route = parserFile("routes/route.json", path);
+                    // если есть такая запись в файле route.json
+                    if (route != "Error") {
+                        string html;
+                        // если view в корневом каталоге, то возвращаем только название html файла без '/'
+                        if (view == "/") html = route;
+                        // иначе полный путь к html файлу
+                        else html = view + "/" + route;
+
+                        // если такой файл существует
+                        if (fileExist(html)) {
+                            // считываем файл
+                            response_body << readFile(html);
+                        }else { // иначе создаём 'базовый' html
+                            response_body << createIndexHtml(view, html);
+                        }
+                    }else { // вывод информации 'страница не найдена'
                         response_body << "<br><br><center>";
                         response_body << "<h1>Error 404. Page not found.</h1>";
                         response_body << "</center><br><smal>Server rex.</smal>";
@@ -264,6 +279,16 @@ public:
 
         return 0;
     }
+
+
+
+    void createConfigFiles(void) {
+        string text = "{\n    \"view\": \"html\",\n    \"content-type\": \"text/html\",\n    \"host\": \"127.0.0.1\",\n    \"port\": \"8000\"\n}";
+        writeFile("server.config.json", text);
+
+        return;
+    }
+
 
 
     string getRequest(char *buf) {
@@ -310,6 +335,43 @@ public:
         return request.str();
      
     }
+
+
+
+    string getRoutes(string path) {
+
+        if (fileExist("routes/route.json")) {
+
+            return parserFile("routes/route.json", path);
+
+        }else {
+            string text = "{\n    \"/\": \"index.html\"\n}";
+            mkdir("routes");
+            writeFile("routes/route.json", text);
+
+            if (path == "/") return "index.html";
+        }    
+
+        return "Error";        
+    }
+
+
+    string createIndexHtml(string dir, string html) {
+        if (dir != "/") {
+            char szBuf[dir.length()];    
+            int nLength = dir.copy(szBuf, dir.length());
+            szBuf[nLength] = '\0';
+            mkdir(szBuf);
+        }
+
+        string text = "<html><head><title>Rex</title><meta content=\"text/html; charset=UTF-8\" http-equiv=\"Content-Type\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><style>body {display: flex;justify-content: center;align-items: center;min-height: 100vh;background: #f1f1f1;}</style></head><body><div class=\'h1\'><h1>Мой сайт на сервере Rex!</h1><small>Create yore file index.html!</small></div></body></html>";
+        writeFile(html, text);
+
+        return text;
+    }
+
+
+
 };
 
 

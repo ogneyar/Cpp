@@ -5,7 +5,7 @@
 #include <sstream> // работа со стримами
 #include <string> // работа со строками
 
-#include "include/rex/rex.server.h"
+#include "rex/rex.server.h"
 
 using namespace std;
 
