@@ -28,13 +28,14 @@ int main() {
 
     thread th(foo, 10); // thread работает синхронно
 
-    // th.detach();    
-
+    // th.detach();
+    
     wcout << L"Вывод информации после задержки #1" << endl;
 
     cout << "th.get_id: " << th.get_id() << endl;
     
     // this_thread::yield();
+    // this_thread::sleep_for(5s);
 
     // bar(); // якобы асинхронная функция
     
