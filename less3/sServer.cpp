@@ -1,4 +1,4 @@
-// #include "stdafx.h"
+﻿// #include "stdafx.h"
 #include <stdio.h>
 #include <tchar.h>
 #include <SDKDDKVer.h> // #include "targetver.h"
@@ -6,8 +6,6 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #include <iostream>
-
-// #include <sstream> // работа со стримами
 
 using namespace std;
 
@@ -18,20 +16,24 @@ int Counter = 0;
 
 // функция рассылки сообщения от клиента
 void ClientHandler(int index) {
-	char msg[256]; 
-
+	int msg_size;
 	while(true) {
-		// принимаем сообщение от сокета (Connections) под номером index
-		recv(Connections[index], msg, sizeof(msg), 0);
+		// принимаем сообщение от сокета (Connections) под номером index, с информацией о длине сообщения
+		recv(Connections[index], (char*)&msg_size, sizeof(int), 0);
+		char *msg = new char[msg_size + 1];
+		msg[msg_size] = '\0';
+		// принимаем сообщение от сокета (Connections) под номером index, с самим сообщением
+		recv(Connections[index], msg, msg_size, 0);
 		for(int i = 0; i < Counter; i++) {
-			if(i == index) { // отсылаем всем кроме самого отправителя
-				cout << Connections[index] << ": " << msg << endl;
+			if(i == index) {
 				continue;
 			}
-			
+			// отсылаем сообщение всем подключеным клиентам информацию о длине сообщения
+			send(Connections[i], (char*)&msg_size, sizeof(int), 0);
 			// отсылаем сообщение всем подключеным клиентам
-			send(Connections[i], msg, sizeof(msg), 0);
+			send(Connections[i], msg, msg_size, 0);
 		}
+		delete[] msg;
 	}
 }
 
@@ -70,19 +72,18 @@ int main(int argc, char* argv[]) {
 			cout << "Error accept newConnection\n";
 		} else {
 			cout << "Client number: " << newConnection << " Connected!\n";
-			char msg[256] = "Hello. Welcome on our server!";
+			string msg = "Hello. Welcome on our server!";
+			int msg_size = msg.size();
+			// отправляем сообщение клиенту, с информацией о длине сообщения
+			send(newConnection, (char*)&msg_size, sizeof(int), 0);
 			// отправляем сообщение клиенту
-			send(newConnection, msg, sizeof(msg), 0);
+			send(newConnection, msg.c_str(), msg_size, 0);
 
 			Connections[i] = newConnection;
 			Counter++;
-
 			// thread - синхронный процесс (запускается беЗконечный цикл в функции ClientHandler)
 			CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ClientHandler, (LPVOID)(i), 0, 0);
 		}
-	}
-	for(int j = 0; j < Counter; j++) {
-		closesocket(Connections[j]);
 	}
 
 	// system("pause");

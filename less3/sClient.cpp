@@ -1,4 +1,4 @@
-// #include "stdafx.h"
+﻿// #include "stdafx.h"
 #include <stdio.h>
 #include <tchar.h>
 #include <SDKDDKVer.h> // #include "targetver.h"
@@ -6,6 +6,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -14,11 +15,16 @@ using namespace std;
 SOCKET Connection;
 
 void ClientHandler() {
-	char msg[256];
+	int msg_size;
 	while(true) {
-		// ждём сообщения от сервера
-		recv(Connection, msg, sizeof(msg), 0);
+		// ждём сообщения от сервера	
+		recv(Connection, (char*)&msg_size, sizeof(int), 0);
+		char *msg = new char[msg_size + 1];
+		msg[msg_size] = '\0';
+		// ждём сообщения от сервера	
+		recv(Connection, msg, msg_size, 0);
 		cout << msg << endl;
+		delete[] msg;
 	}
 }
 
@@ -51,18 +57,20 @@ int main(int argc, char* argv[]) {
 	// thread - синхронный процесс (запускается беЗконечный цикл в функции ClientHandler)
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE)ClientHandler, 0, 0, 0);
 
-	char msg1[256];
+	std::string msg1;
 	while(true) {
 		// ждём ввода сообщения от клиента
-		cin.getline(msg1, sizeof(msg1));
-		// отправляем сообщение на сервер
-		send(Connection, msg1, sizeof(msg1), 0);
+		getline(cin, msg1);
+		int msg_size = msg1.size();
+		// отправляем сообщения на сервер
+		send(Connection, (char*)&msg_size, sizeof(int), 0);
+		send(Connection, msg1.c_str(), msg_size, 0);
 		Sleep(10);
 	}
 
 	system("pause");
 	closesocket(Connection);
 	WSACleanup();
-
+	
 	return 0;
 }
