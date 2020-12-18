@@ -6,12 +6,16 @@
 // #include <string>
 #include <iostream> // работа вводом/выводом данных
 // #include <sstream> // работа со стримами
-#include <cstring>
+// #include <cstring>
+
+#define LENGTH_URL 256
 
 using namespace std;
 
 
 int main() {
+
+    cout << endl;
 
     char protocol[] = "http";
 
@@ -19,28 +23,37 @@ int main() {
 
     char port[] = "8000";
 
-    char url[256];
+    char link[] = "/shop/room?id=this";
 
-    strcpy(url, protocol);
-    strcat(url, "://");
+    char url[LENGTH_URL];
+
+    if ( strlen(protocol) > 0 ) {
+        strcpy(url, protocol);
+        strcat(url, "://");
+    }
     strcat(url, host);
     if ( strlen(port) > 0 ) {
         strcat(url, ":");
         strcat(url, port);
     }
+    strcat(url, link);
 
     cout << url << endl << endl;
 
     // char url[] = "http://localhost:8000";
 
-    //  if (strnicmp(url,"http://",7) == 0) cout << "http://" << endl << endl;
+
+
+    // array = parse_url(url);
+
+
+
+
+    // if (strnicmp(url,"http://",7) == 0) || (strnicmp(url,"https://",8) cout << "strnicmp http://" << endl << endl;
 
     size_t pch2;
     pch2 = strcspn(url,"://");
-    pch2 += 3;
-    // cout << "pch2: " << pch2 << endl << endl;
-
-    char proto[256];
+    char proto[LENGTH_URL];
     strcpy(proto, url);
     proto[pch2] = '\0';
     cout << "protocol: " << proto << endl << endl;
@@ -51,8 +64,12 @@ int main() {
         uri = ++uri;
     }    
     // cout << uri << endl << endl;
-     
-    // char *pch;
+
+    char *linker = strchr( (char*)uri, '/' );
+    
+    char *get = strchr( (char*)linker, '?' );
+
+    
     int PortNum;
     char *pch = strchr( (char*)uri, ':' );
     
@@ -66,9 +83,49 @@ int main() {
         if ( PortNum == 0 ) PortNum = 80;
     }
 
-    cout << "host: " << uri << endl << endl;
+    cout << "domain: " << uri << endl << endl;
+
     cout << "port: " << PortNum << endl << endl;
 
+
+    // cout << "link: " << linker << endl << endl;
+
+    pch2 = strcspn(linker,"?");
+    if ( pch2 > 0 ) {
+        
+        char lin[strlen(linker)];
+        strcpy(lin, linker);
+        lin[pch2] = '\0';
+
+        cout << "link: " << lin << endl << endl;
+     }else cout << "link: " << linker << endl << endl;
+
+    
+
+
+    if ( strlen(get) > 0 ) {
+
+        // cout << "get: " << ++get << endl << endl;
+
+        ++get;
+
+        char *value = strchr( (char*)get, '=' );
+
+        // cout << "value: " << value << endl << endl;
+        
+        
+        char name[strlen(get)];
+        strcpy(name, get);
+
+        // cout << "name: " << name << endl << endl;
+
+        pch2 = strcspn(name,"=");
+
+        name[pch2] = '\0';
+
+        value = ++value;
+        cout << "_GET['" << name << "']: " << value << endl << endl;
+    }
 
 
     // // служебная структура для хранение информации
