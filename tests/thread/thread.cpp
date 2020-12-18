@@ -1,5 +1,5 @@
 #include <iostream> // работа с вводом/выводом информации
-#include <thread> // работа с потоками
+#include <thread> // работа с потоками 
 #include <mutex> // запреты для thread (lock/unlock) 
 #include <unistd.h> // sleep()
 
