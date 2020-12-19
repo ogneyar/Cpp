@@ -2,60 +2,7 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-// #include <stdio.h>
-// #include <string>
-#include <iostream> // работа вводом/выводом данных
-// #include <sstream> // работа со стримами
-// #include <cstring>
-
-#define LENGTH_URL 256
-
-using namespace std;
-
-// typedef struct get;
-
-// typedef struct {
-//     char pr[100];
-//     char *h[100];
-//     char *p[100];
-//     char *l[100];
-//     get g;
-// }object;
-
-
-class Url { 
-private:
-    char protocol[LENGTH_URL];
-    char host[LENGTH_URL];
-    char port[LENGTH_URL];
-    char link[LENGTH_URL];
-
-public: 
-    void parse(char * url) { 
-
-        cout << "Start parser" << endl << endl; 
-
-        parse_protocol(url);
-
-    } 
-
-    // парсим тип протокола передачи данных (http, ftp, ssh)
-    void parse_protocol(char * url) {
-        // unsigned long long переменная
-        size_t pch2;
-        // узнаём номер символа в строке url
-        pch2 = strcspn(url,"://");
-        // копируем в приватную переменную строку url
-        strcpy(protocol, url);
-        // обрезаем по двоеточие (://)
-        protocol[pch2] = '\0';
-        // cout << "protocol: ... " << protocol << endl << endl;
-    }
-
-    char * getProtocol() { return protocol; }
-};
-
-Url parse_url(char *);
+#include "parse_url.h"
 
 
 int main() {
@@ -63,7 +10,7 @@ int main() {
     char protocol[] = "http";
     char host[] = "localhost.ru";
     char port[] = "8000";
-    char link[] = "/shop/room?id=this";
+    char link[] = "/shop/room?id=this&name=haski";
 
     char url[LENGTH_URL];
 
@@ -78,91 +25,23 @@ int main() {
     }
     strcat(url, link);
 
-    cout << endl << url << endl << endl;
-
-    // char url[] = "http://localhost:8000";
-
-
+    cout << endl << url << endl << endl; // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
 
     
-    Url _URI = parse_url(url);
-    cout << "protocol: " << _URI.getProtocol() << endl << endl;
+    Url _URI(url);
+    
+
+    cout << "protocol: " << _URI.getProtocol() << endl ;
+    cout << "host: " << _URI.getHost() << endl ;
+    cout << "port: " << _URI.getPort() << endl ;
+    cout << "link: " << _URI.getLink() << endl << endl;
 
 
 
-
+    // посимвольное сравнение строк
     // if (strnicmp(url,"http://",7) == 0) || (strnicmp(url,"https://",8) cout << "strnicmp http://" << endl << endl;
 
 
-    char *uri = strchr( (char*)url, '/' );
-    if ( uri != 0 ) {
-        uri = ++uri;
-        uri = ++uri;
-    }    
-    // cout << uri << endl << endl;
-
-    char *linker = strchr( (char*)uri, '/' );
-    
-    char *get = strchr( (char*)linker, '?' );
-
-    
-    int PortNum;
-    char *pch = strchr( (char*)uri, ':' );
-    
-    if ( pch == 0 ) {
-        PortNum = 80;
-    }else {
-        // нахождения позиции символа ':' и вместо него установка указателя конца строки
-        uri[strlen(uri) - strlen(pch)] = '\0';
-        
-        PortNum = atoi( ++pch );
-        if ( PortNum == 0 ) PortNum = 80;
-    }
-
-    cout << "domain: " << uri << endl << endl;
-
-    cout << "port: " << PortNum << endl << endl;
-
-
-    // cout << "link: " << linker << endl << endl;
-
-    size_t pch2;
-    pch2 = strcspn(linker,"?");
-    if ( pch2 > 0 ) {
-        
-        char lin[strlen(linker)];
-        strcpy(lin, linker);
-        lin[pch2] = '\0';
-
-        cout << "link: " << lin << endl << endl;
-     }else cout << "link: " << linker << endl << endl;
-
-    
-
-
-    if ( strlen(get) > 0 ) {
-
-        // cout << "get: " << ++get << endl << endl;
-
-        ++get;
-
-        char *value = strchr( (char*)get, '=' );
-
-        // cout << "value: " << value << endl << endl;
-        
-        
-        char name[strlen(get)];
-        strcpy(name, get);
-
-        // cout << "name: " << name << endl << endl;
-
-        pch2 = strcspn(name,"=");
-
-        name[pch2] = '\0';
-
-        value = ++value;
-        cout << "_GET['" << name << "']: " << value << endl << endl;
-    }
 
 
     // // служебная структура для хранение информации
@@ -387,12 +266,3 @@ int main() {
     return 0;
 }
 
-
-
-Url parse_url(char * url) {
-
-    Url u;
-    u.parse(url);
-
-    return u;
-}
