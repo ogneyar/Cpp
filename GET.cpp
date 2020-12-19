@@ -8,7 +8,7 @@
 #include <iostream> // работа вводом/выводом данных
 #include <sstream> // работа со стримами
 
-// #include <windows.h>
+#include <windows.h>
 
 using namespace std;
 
@@ -17,7 +17,7 @@ WSADATA lpWSAData;
 
 const char * http_user_agent = "Search Engine";
 
-static char Rec[2048000];
+static char Rec[2097152]; // 2Mb
 
 
 int main(void) { 
@@ -36,13 +36,14 @@ int main(void) {
     // ensure that url starts with "HTTP://" or "http://"
     if (memcmp(url,"HTTP://",7)!=0 && memcmp(url,"http://",7)!=0) return(7);
 
-    url+=7;// seek "http://"
+    // url += 7;// seek "http://"
     // initialize structure WSADATA lpWSAData defined in 'socket.h'
     if (WSAStartup(MAKEWORD(1,1),&lpWSAData)!=0) return(1);
 
     // use default port number - 80 if not specified other
     // strHlp - helper string that contains server name and path on the server
     strcpy(strHlp,url);
+    
     pch = strchr((char*)strHlp,':');
     // port not defined in passed URL
     if (pch==0) {

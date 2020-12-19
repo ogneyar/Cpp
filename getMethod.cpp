@@ -2,39 +2,53 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-#include "parse_url.h"
+#include "myLibs/parse_url.h"
 
 
 int main() {
+    
+    // тестовая склейка url адреса
+    // char protocol[] = "http";
+    // char host[] = "localhost.ru";
+    // char port[] = "8000";
+    // char link[] = "/shop/room?id=this&name=haski";
+    // char url[LENGTH_URL];
+    // if ( strlen(protocol) > 0 ) {
+    //     strcpy(url, protocol);
+    //     strcat(url, "://");
+    // }
+    // strcat(url, host);
+    // if ( strlen(port) > 0 ) {
+    //     strcat(url, ":");
+    //     strcat(url, port);
+    // }
+    // strcat(url, link);
+    // cout << endl << url << endl << endl; 
 
-    char protocol[] = "http";
-    char host[] = "localhost.ru";
-    char port[] = "8000";
-    char link[] = "/shop/room?id=this&name=haski";
 
-    char url[LENGTH_URL];
+    char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
+    
+    cout << "Start parser url. Url: " << url << endl << endl; 
+    
+    Url Parse(url);
 
-    if ( strlen(protocol) > 0 ) {
-        strcpy(url, protocol);
-        strcat(url, "://");
-    }
-    strcat(url, host);
-    if ( strlen(port) > 0 ) {
-        strcat(url, ":");
-        strcat(url, port);
-    }
-    strcat(url, link);
 
-    cout << endl << url << endl << endl; // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
+    char *protocol = Parse.getProtocol();
+    cout << "protocol: " << protocol << endl ;
+
+    char *host = Parse.getHost();
+    cout << "host: " << host << endl ;
+
+    int port = Parse.getPort();
+    cout << "port: " << port << endl ;
+
+    char *path = Parse.getPath();
+    cout << "path: " << path << endl << endl;
 
     
-    Url _URI(url);
-    
+    // cout << "gethostbyname(uri): " << gethostbyname("http://hutoryanin.ru")->h_addr[1] << endl; 
 
-    cout << "protocol: " << _URI.getProtocol() << endl ;
-    cout << "host: " << _URI.getHost() << endl ;
-    cout << "port: " << _URI.getPort() << endl ;
-    cout << "link: " << _URI.getLink() << endl << endl;
+
 
 
 
@@ -82,6 +96,7 @@ int main() {
     // // Инициализируем структуру, хранящую адрес сокета - addr.
     // // HTTP-сервер будет висеть на заданном порту заданного хоста
     // result = getaddrinfo(host, "80", &hints, &addr);
+    
 
     //     // Если инициализация структуры адреса завершилась с ошибкой,
     //     // выведем сообщением об этом и завершим выполнение программы 
