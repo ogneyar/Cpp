@@ -35,13 +35,13 @@ int main(int argc, char* argv[]) {
 	if(WSAStartup(DLLVersion, &wsaData) != 0) {
 		cout << "WSAStartup failed\n" << endl;
 		system("pause");
-		return 1;
+		return 1; 
 	}
 
 	SOCKADDR_IN addr;
 	int sizeofaddr = sizeof(addr);
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	addr.sin_port = htons(1111);
+	addr.sin_port = htons(8000);
 	addr.sin_family = AF_INET;
 
 	// создаём сокет

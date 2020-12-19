@@ -13,4 +13,5 @@ get:
 p:
 	g++ -O3 -s myLibs/parse_url.cpp -o myLibs/parse_url.exe
 
-
+ip:
+	g++ -O3 -s myLibs/getIp.cpp -o myLibs/getIp.exe -l ws2_32

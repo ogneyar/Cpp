@@ -5,6 +5,10 @@
 #include "myLibs/parse_url.h"
 
 
+static char Rec[2097152]; // 2Mb
+
+
+
 int main() {
     
     // тестовая склейка url адреса
@@ -26,7 +30,9 @@ int main() {
     // cout << endl << url << endl << endl; 
 
 
-    char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
+    char url[] = "http://hutoryanin.ru:8000/shop/room?id=this&name=haski";
+
+    // char url[] = "http://localhost:8000/test";
     
     cout << "Start parser url. Url: " << url << endl << endl; 
     
@@ -46,231 +52,136 @@ int main() {
     cout << "path: " << path << endl << endl;
 
     
-    // cout << "gethostbyname(uri): " << gethostbyname("http://hutoryanin.ru")->h_addr[1] << endl; 
-
-
-
+   
 
 
     // посимвольное сравнение строк
     // if (strnicmp(url,"http://",7) == 0) || (strnicmp(url,"https://",8) cout << "strnicmp http://" << endl << endl;
 
+    
+
+    // служебная структура для хранение информации
+    // о реализации Windows Sockets
+    WSADATA wsaData;
+    // старт использования библиотеки сокетов процессом
+    // (подгружается Ws2_32.dll)
+    int result = WSAStartup(MAKEWORD(2, 1), &wsaData);
+    // Если произошла ошибка подгрузки библиотеки
+    if (result != 0) {
+        cerr << "WSAStartup failed: " << result << "\n";
+        system("pause");
+        return result;
+    }
 
 
 
-    // // служебная структура для хранение информации
-    // // о реализации Windows Sockets
-    // WSADATA wsaData;
-    // // старт использования библиотеки сокетов процессом
-    // // (подгружается Ws2_32.dll)
-    // int result = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    // // Если произошла ошибка подгрузки библиотеки
-    // if (result != 0) {
-    //     cerr << "WSAStartup failed: " << result << "\n";
-    //     return result;
-    // }
 
-    // struct addrinfo* addr = NULL; // структура, хранящая информацию
-    // // об IP-адресе  слущающего сокета
 
-    // // Шаблон для инициализации структуры адреса
-    // struct addrinfo hints;
-    // ZeroMemory(&hints, sizeof(hints));
 
-    // // AF_INET определяет, что используется сеть для работы с сокетом
-    // hints.ai_family = AF_INET;
-    // hints.ai_socktype = SOCK_STREAM; // Задаем потоковый тип сокета
-    // hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
-    // // Сокет биндится на адрес, чтобы принимать входящие соединения
-    // hints.ai_flags = AI_PASSIVE;
 
+    char hooost[1024] = "hutoryanin.ru";
+    cout << "gethostbyname: " <<  inet_ntoa(*((in_addr*)gethostbyname(hooost)->h_addr_list[0])) << endl;
+
+
+
+
+
+
+
+    struct addrinfo* addr = NULL; // структура, хранящая информацию
+    // об IP-адресе  слущающего сокета
+
+    // Шаблон для инициализации структуры адреса
+    struct addrinfo hints;
+    ZeroMemory(&hints, sizeof(hints));
+
+    // AF_INET определяет, что используется сеть для работы с сокетом
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM; // Задаем потоковый тип сокета
+    hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
+    // Сокет биндится на адрес, чтобы принимать входящие соединения
+    hints.ai_flags = AI_PASSIVE;
+
+
+    // Инициализируем структуру, хранящую адрес сокета - addr.
+    // HTTP-сервер будет висеть на заданном порту заданного хоста
+    result = getaddrinfo(host, "80", &hints, &addr);
+    
+
+    // Если инициализация структуры адреса завершилась с ошибкой,
+    // выведем сообщением об этом и завершим выполнение программы 
+    if (result != 0) {
+        cerr << "getaddrinfo failed: " << result << "\n";
+        WSACleanup(); // выгрузка библиотеки Ws2_32.dll
+        return 1;
+    }
+
+    // Создание сокета
+    int listen_socket = socket(addr->ai_family, addr->ai_socktype,
+        addr->ai_protocol);
+    // Если создание сокета завершилось с ошибкой, выводим сообщение,
+    // освобождаем память, выделенную под структуру addr,
+    // выгружаем dll-библиотеку и закрываем программу
+    if (listen_socket == INVALID_SOCKET) {
+        cerr << "Error at socket: " << WSAGetLastError() << "\n";
+        freeaddrinfo(addr);
+        WSACleanup();
+        return 1;
+    }
+
+	// соединяемся с сервером
+	if(connect(listen_socket, (SOCKADDR*)&addr, sizeof(addr)) != 0) {
+		cout << "Error: failed connect to server.\n" << endl;
+		system("pause");
+		return 1;
+	}
+	cout << "Connected in the server.\n" << endl;
+    
+    char query[2048];
+    const char * user_agent = "Search Engine";
+
+    strcpy( query, "GET /" );
+    strcat( query, path );
+    strcat( query, " HTTP/1.0\nHost: ");
+    strcat( query, host);
+    strcat( query, "\nUser-agent: ");
+    strcat( query, user_agent);
+    strcat( query, "\nAccept: */*\n\n");
+
+    int cnt = send(listen_socket, query, strlen(query), 0);
+
+    if (cnt == SOCKET_ERROR) {
+		cout << "Error: failed send to server.\n" << endl;
+		system("pause");
+		return 1;
+	}
 
    
+    char InBuff[2048];
 
-
-
-
-
-
-
-    // // Инициализируем структуру, хранящую адрес сокета - addr.
-    // // HTTP-сервер будет висеть на заданном порту заданного хоста
-    // result = getaddrinfo(host, "80", &hints, &addr);
+    strcpy(Rec, "");
     
+    while (cnt!=0) {
+        // clear InBuff - fill 2048 bytes to NULL
+        memset(&InBuff,0,2048);
+        // receive a 2048 bytes from 's' sock
+        cnt = recv (listen_socket, (char*)&InBuff, sizeof(InBuff),0);
+        // append it to main buffer 'Rec'
+        strcat(Rec,InBuff);
+    }
+    char* str = (char*)&Rec;
 
-    //     // Если инициализация структуры адреса завершилась с ошибкой,
-    //     // выведем сообщением об этом и завершим выполнение программы 
-    //     if (result != 0) {
-    //         cerr << "getaddrinfo failed: " << result << "\n";
-    //         WSACleanup(); // выгрузка библиотеки Ws2_32.dll
-    //         return 1;
-    //     }
-
-    //     // Создание сокета
-    //     int listen_socket = socket(addr->ai_family, addr->ai_socktype,
-    //         addr->ai_protocol);
-    //     // Если создание сокета завершилось с ошибкой, выводим сообщение,
-    //     // освобождаем память, выделенную под структуру addr,
-    //     // выгружаем dll-библиотеку и закрываем программу
-    //     if (listen_socket == INVALID_SOCKET) {
-    //         cerr << "Error at socket: " << WSAGetLastError() << "\n";
-    //         freeaddrinfo(addr);
-    //         WSACleanup();
-    //         return 1;
-    //     }
+    cout << "Response: " << endl << str << endl << endl;;
 
 
-    //     // Привязываем сокет к IP-адресу
-    //     result = bind(listen_socket, addr->ai_addr, (int)addr->ai_addrlen);
-
-    //     // Если привязать адрес к сокету не удалось, то выводим сообщение
-    //     // об ошибке, освобождаем память, выделенную под структуру addr.
-    //     // и закрываем открытый сокет.
-    //     // Выгружаем DLL-библиотеку из памяти и закрываем программу.
-    //     if (result == SOCKET_ERROR) {
-    //         cerr << "bind failed with error: " << WSAGetLastError() << "\n";
-    //         freeaddrinfo(addr);
-    //         closesocket(listen_socket);
-    //         WSACleanup();
-    //         return 1;
-    //     }
 
 
-    //     // Инициализируем слушающий сокет
-    //     if (listen(listen_socket, SOMAXCONN) == SOCKET_ERROR) {
-    //         cerr << "listen failed with error: " << WSAGetLastError() << "\n";
-    //         closesocket(listen_socket);
-    //         WSACleanup();
-    //         return 1;
-    //     }
-
-    
-    //     cout << "Server rex hes been started on " << host << ".\n";
-    //     cout << "Listen port " << port << "... ";
-
-    //     const int max_client_buffer_size = 2048;
-    //     char buf[max_client_buffer_size];
-
-    //     long long unsigned int client_socket = INVALID_SOCKET;
-
-    //     for (;;) {
-
-    //         // Принимаем входящие соединения
-    //         client_socket = accept(listen_socket, NULL, NULL);
-    //         if (client_socket == INVALID_SOCKET) {
-    //             cerr << "accept failed: " << WSAGetLastError() << "\n";
-    //             closesocket(listen_socket);
-    //             WSACleanup();
-    //             return 1;
-    //         }
-        
-
-    //         result = recv(client_socket, buf, max_client_buffer_size, 0);
-
-    //         stringstream response; // сюда будет записываться ответ клиенту
-    //         stringstream response_body; // тело ответа
-
-    //         if (result == SOCKET_ERROR) {
-    //             // ошибка получения данных
-    //             cerr << "recv failed: " << result << "\n";
-    //             closesocket(client_socket);
-    //         } else if (result == 0) {
-    //             // соединение закрыто клиентом
-    //             cerr << "connection closed...\n";
-    //         } else if (result > 0) {
-    //             // Мы знаем фактический размер полученных данных, поэтому ставим метку конца строки
-    //             // В буфере запроса.
-    //             // (-4) поставил так как при считывании данных дублировалась строка 'cookies' 
-    //             buf[result-4] = '\0';
 
 
-    //             // Переданные данные от клиента записываем в строку JSON
-    //             string json = Rex::getRequest(buf);
-
-    //             mkdir("temp");
-    //             string temp = "temp/rex.request.json";
-
-    //             // и сохраняем в файл (почему-то пока только с файлом работает rapidjson)
-    //             writeFile(temp, json);
-
-    //             // запрашиваем поле path (путь в адресной строке браузера)
-    //             string path = parserFile(temp, "path");   
-
-
-    //             // буфер для перевода string в массив char
-    //             char pathBuf[path.length()];                
-    //             int pathLength = path.copy(pathBuf, path.length());
-    //             // если в конце адреса нет слеша, то добавляем
-    //             if (pathBuf[pathLength-1] != '/') path = path + "/";
-               
-                
-    //             // запрашиваем поле method (GET PUT POST...)
-    //             string method = parserFile(temp, "method");
-                
-                
-    //             if (path != "/favicon.ico/") {
-    //                 // в консоли выводим сообщение, кроме когда браузером запрашивается иконка
-    //                 cout << "Request method: " << method << " " << path << "\n";
-                                    
-
-    //                 // Данные успешно получены
-    //                 // формируем тело ответа (HTML)
-    //                 string route = Rex::getRoutes(path);
-    //                 // string route = parserFile("routes/route.json", path);
-    //                 // если есть такая запись в файле route.json
-    //                 if (route != "Error") {
-    //                     string html;
-    //                     // если view в корневом каталоге, то возвращаем только название html файла без '/'
-    //                     if (view == "/") html = route;
-    //                     // иначе полный путь к html файлу
-    //                     else html = view + "/" + route;
-
-    //                     // если такой файл существует
-    //                     if (fileExist(html)) {
-    //                         // считываем файл
-    //                         response_body << readFile(html);
-    //                     }else { // иначе создаём 'базовый' html
-    //                         response_body << Rex::createIndexHtml(view, html);
-    //                     }
-    //                 }else { // вывод информации 'страница не найдена'
-    //                     response_body << "<br><br><center>";
-    //                     response_body << "<h1>Error 404. Page not found.</h1>";
-    //                     response_body << "</center><br><smal>Server rex.</smal>";
-    //                     response_body << "<br><hr>";
-    //                 }                        
-
-    //                 cout << "Listen port " << port << "... ";               
-
-    //                 // Формируем весь ответ вместе с заголовками
-    //                 response << "HTTP/1.1 200 OK\r\n"
-    //                     << "Version: HTTP/1.1\r\n"
-    //                     << "Content-Type: text/html; charset=utf-8\r\n"
-    //                     << "Content-Length: " << response_body.str().length()
-    //                     << "\r\n\r\n"
-    //                     << response_body.str(); 
-
-    //                 // Отправляем ответ клиенту с помощью функции send
-    //                 result = send(client_socket, response.str().c_str(),
-    //                     response.str().length(), 0);
-
-    //                 if (result == SOCKET_ERROR) {
-    //                     // произошла ошибка при отправле данных
-    //                     cerr << "send failed: " << WSAGetLastError() << "\n";
-    //                 }
-                    
-    //             }
-
-    //             // Закрываем соединение к клиентом
-    //             closesocket(client_socket);
-    //         }
-
-
-    //     }
-
-    //     // Убираем за собой
-    //     closesocket(listen_socket);
-    //     freeaddrinfo(addr);
-    //     WSACleanup();
+    // Убираем за собой
+    closesocket(listen_socket);
+    freeaddrinfo(addr);
+    WSACleanup();
 
 
 
