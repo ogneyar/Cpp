@@ -12,17 +12,57 @@
 
 using namespace std;
 
+// typedef struct get;
+
+// typedef struct {
+//     char pr[100];
+//     char *h[100];
+//     char *p[100];
+//     char *l[100];
+//     get g;
+// }object;
+
+
+class Url { 
+private:
+    char protocol[LENGTH_URL];
+    char host[LENGTH_URL];
+    char port[LENGTH_URL];
+    char link[LENGTH_URL];
+
+public: 
+    void parse(char * url) { 
+
+        cout << "Start parser" << endl << endl; 
+
+        parse_protocol(url);
+
+    } 
+
+    // парсим тип протокола передачи данных (http, ftp, ssh)
+    void parse_protocol(char * url) {
+        // unsigned long long переменная
+        size_t pch2;
+        // узнаём номер символа в строке url
+        pch2 = strcspn(url,"://");
+        // копируем в приватную переменную строку url
+        strcpy(protocol, url);
+        // обрезаем по двоеточие (://)
+        protocol[pch2] = '\0';
+        // cout << "protocol: ... " << protocol << endl << endl;
+    }
+
+    char * getProtocol() { return protocol; }
+};
+
+Url parse_url(char *);
+
 
 int main() {
 
-    cout << endl;
-
     char protocol[] = "http";
-
     char host[] = "localhost.ru";
-
     char port[] = "8000";
-
     char link[] = "/shop/room?id=this";
 
     char url[LENGTH_URL];
@@ -38,25 +78,21 @@ int main() {
     }
     strcat(url, link);
 
-    cout << url << endl << endl;
+    cout << endl << url << endl << endl;
 
     // char url[] = "http://localhost:8000";
 
 
 
-    // array = parse_url(url);
+    
+    Url _URI = parse_url(url);
+    cout << "protocol: " << _URI.getProtocol() << endl << endl;
 
 
 
 
     // if (strnicmp(url,"http://",7) == 0) || (strnicmp(url,"https://",8) cout << "strnicmp http://" << endl << endl;
 
-    size_t pch2;
-    pch2 = strcspn(url,"://");
-    char proto[LENGTH_URL];
-    strcpy(proto, url);
-    proto[pch2] = '\0';
-    cout << "protocol: " << proto << endl << endl;
 
     char *uri = strchr( (char*)url, '/' );
     if ( uri != 0 ) {
@@ -90,6 +126,7 @@ int main() {
 
     // cout << "link: " << linker << endl << endl;
 
+    size_t pch2;
     pch2 = strcspn(linker,"?");
     if ( pch2 > 0 ) {
         
@@ -348,4 +385,14 @@ int main() {
     system("pause");
 
     return 0;
+}
+
+
+
+Url parse_url(char * url) {
+
+    Url u;
+    u.parse(url);
+
+    return u;
 }

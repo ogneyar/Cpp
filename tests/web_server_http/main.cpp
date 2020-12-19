@@ -67,7 +67,7 @@ typedef enum
 typedef struct
 {
   eHTTPMethod type;
-  char        path[255];
+  char        path[255]; 
 }sHTTPHeader;
 
 // void *get_client_addr(struct sockaddr *);
