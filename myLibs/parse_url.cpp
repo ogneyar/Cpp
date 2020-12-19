@@ -6,8 +6,9 @@ int main() {
 
     char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
     
+    
     cout << "Start parser url." << endl << endl; 
-    cout << "url: " << url << endl << endl;
+    cout << url << endl << endl;
 
 
     Url Parse(url);
@@ -25,7 +26,7 @@ int main() {
     cout << "path: " << path << endl << endl;
 
 
-    cout << "url: " << url << endl << endl;
+    cout << "uri: " << url << endl << endl;
 
 
     system("pause");

@@ -12,8 +12,8 @@ private:
     char protocol[LENGTH_URL];
     char host[LENGTH_URL];
     int port;
-    char *link; // путь path с GET параметрами
-    char *path;
+    char link[LENGTH_URL]; // путь path с GET параметрами
+    char path[LENGTH_URL];
 
 public: 
     Url( char * url ) { // конструктор класса
@@ -62,8 +62,21 @@ public:
     char * parse_link( char * url ) {
         // отбрасываем от url имя протокола, если он есть
         char * uri = parse_uri( url );
-        // путь url адреса после имени домена
-        Url::link = strchr( uri, '/' );
+
+        // номер позиции в строке
+        int lin = strcspn( uri, "/" );
+        // количество символов
+        int len = strlen( uri );
+
+        if ( len != lin ) {
+            // путь url адреса после имени домена
+            strcpy( Url::link, strchr( uri, '/' ) );
+        }else {
+            // сохраняем GET запрос
+            if ( strcspn( uri, "?" ) != len ) {
+                strcpy( Url::link, strchr( uri, '?' ) );
+            }else strcpy( Url::link, "/" );
+        }
 
         return Url::link;
     }
@@ -97,8 +110,20 @@ public:
         if ( pch == 0 ) {
             // тогда по умолчанию 80 порт
             Url::port = 80;
-            // обрезаем всё что после имени домена
-            Url::host[strcspn(uri,"/")] = '\0';
+
+            // номер позиции в строке
+            int lin = strcspn( uri, "/" );
+            // количество символов
+            int len = strlen( uri );
+
+            if ( len != lin ) {
+                // обрезаем всё что после имени домена
+                Url::host[ lin ] = '\0';
+            }else {
+                // сохраняем GET запрос
+                if ( strcspn( uri, "?" ) != strlen( uri ) ) Url::host[strcspn( uri, "?")] = '\0';
+            }
+            
         }else {
             // нахождения позиции символа ':' и вместо него установка указателя конца строки
             Url::host[strlen(uri) - strlen(pch)] = '\0';
@@ -123,20 +148,29 @@ public:
     void parse_get_param(char *url) {
         
         char *linker = parse_link( url );
-        
-        // сохраняем GET запрос
-        char *get = strchr( linker, '?' );
+
+        // копируем в переменую path весь путь, если есть GET параметры то их позже удалим        
+        strcpy( Url::path, linker );
+                       
+        // номер позиции в строке
+        int lin = strcspn( linker, "?" );
+        int len = strlen(linker);
+
         // если есть GET параметры
-        if ( strlen(get) > 0 ) {
+        if ( len != lin ) {
+
+            // сохраняем GET запрос
+            char *get = strchr( linker, '?' );
+
             // unsigned long long переменная
             size_t pch2;
             // сохраняем в ней номер позиции знака ?
             pch2 = strcspn(linker,"?");
-
-            // копируем в переменую path весь путь, а далее...
-            Url::path = linker;
+            
             // удаляем из пути GET параметры
             Url::path[pch2] = '\0'; // можно было так: Url::path[strcspn(linker,"?")] = '\0'; 
+
+             if ( pch2 == 0 ) strcpy( Url::path, "/" );
 
             // удаляем знак '?'
             ++get;
@@ -150,7 +184,7 @@ public:
             char *par;
 
             size_t t = strcspn( get, "&" );
-            int len = strlen( get );
+            len = strlen( get );
 
             while( t < len ) {
                 
@@ -194,7 +228,7 @@ public:
 
 
         }else { // если нет GET параметров, то ничего не надо делать :)
-            // cout << "path: " << linker << endl << endl;
+            // cout << "path: " << linker << endl << endl;            
         }
 
     }

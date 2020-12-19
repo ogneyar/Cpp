@@ -3,36 +3,22 @@
 #pragma comment(lib, "Ws2_32.lib")
 
 #include "myLibs/parse_url.h"
+#include "myLibs/getIp.h"
 
 
 static char Rec[2097152]; // 2Mb
 
 
-
 int main() {
     
-    // тестовая склейка url адреса
-    // char protocol[] = "http";
-    // char host[] = "localhost.ru";
-    // char port[] = "8000";
-    // char link[] = "/shop/room?id=this&name=haski";
-    // char url[LENGTH_URL];
-    // if ( strlen(protocol) > 0 ) {
-    //     strcpy(url, protocol);
-    //     strcat(url, "://");
-    // }
-    // strcat(url, host);
-    // if ( strlen(port) > 0 ) {
-    //     strcat(url, ":");
-    //     strcat(url, port);
-    // }
-    // strcat(url, link);
-    // cout << endl << url << endl << endl; 
+    char url[] = "http://hutoryanin.ru/test?id=this&name=haski";
 
-
-    char url[] = "http://hutoryanin.ru:8000/shop/room?id=this&name=haski";
+    // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
 
     // char url[] = "http://localhost:8000/test";
+
+    // char url[] = "https://youtube.com?ggg=222";
+
     
     cout << "Start parser url. Url: " << url << endl << endl; 
     
@@ -47,12 +33,16 @@ int main() {
 
     int port = Parse.getPort();
     cout << "port: " << port << endl ;
+    
+    char *link = Parse.getLink();
+    cout << "link: " << link << endl;
 
     char *path = Parse.getPath();
     cout << "path: " << path << endl << endl;
 
-    
-   
+    char *ip = getIp(host);
+    cout << "Ip: " << ip << endl << endl;
+
 
 
     // посимвольное сравнение строк
@@ -74,17 +64,8 @@ int main() {
     }
 
 
-
-
-
-
-
-    char hooost[1024] = "hutoryanin.ru";
-    cout << "gethostbyname: " <<  inet_ntoa(*((in_addr*)gethostbyname(hooost)->h_addr_list[0])) << endl;
-
-
-
-
+    // char hooost[1024] = "hutoryanin.ru";
+    // cout << "gethostbyname: " <<  inet_ntoa(*((in_addr*)gethostbyname(hooost)->h_addr_list[0])) << endl;
 
 
 
@@ -101,24 +82,28 @@ int main() {
     hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
     // Сокет биндится на адрес, чтобы принимать входящие соединения
     hints.ai_flags = AI_PASSIVE;
-
-
+    
+    
     // Инициализируем структуру, хранящую адрес сокета - addr.
     // HTTP-сервер будет висеть на заданном порту заданного хоста
     result = getaddrinfo(host, "80", &hints, &addr);
-    
-
     // Если инициализация структуры адреса завершилась с ошибкой,
     // выведем сообщением об этом и завершим выполнение программы 
     if (result != 0) {
         cerr << "getaddrinfo failed: " << result << "\n";
         WSACleanup(); // выгрузка библиотеки Ws2_32.dll
+        system("pause");
         return 1;
     }
+
 
     // Создание сокета
     int listen_socket = socket(addr->ai_family, addr->ai_socktype,
         addr->ai_protocol);
+
+    // int listen_socket = socket(AF_INET, SOCK_STREAM, 0);
+
+
     // Если создание сокета завершилось с ошибкой, выводим сообщение,
     // освобождаем память, выделенную под структуру addr,
     // выгружаем dll-библиотеку и закрываем программу
@@ -126,11 +111,14 @@ int main() {
         cerr << "Error at socket: " << WSAGetLastError() << "\n";
         freeaddrinfo(addr);
         WSACleanup();
+        system("pause");
         return 1;
     }
 
+    // bind(listen_socket, (sockaddr *)&addr, sizeof(addr));
+
 	// соединяемся с сервером
-	if(connect(listen_socket, (SOCKADDR*)&addr, sizeof(addr)) != 0) {
+	if(connect(listen_socket, (sockaddr *)&addr, sizeof(addr)) != 0) {
 		cout << "Error: failed connect to server.\n" << endl;
 		system("pause");
 		return 1;
