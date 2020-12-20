@@ -11,7 +11,7 @@ static char Rec[2097152]; // 2Mb
 
 int main() {
     
-    char url[] = "http://hutoryanin.ru/test?id=this&name=haski";
+    // char url[] = "http://hutoryanin.ru/test?id=this&name=haski";
 
     // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
 
@@ -19,6 +19,7 @@ int main() {
 
     // char url[] = "https://youtube.com?ggg=222";
 
+    char url[] = "youtube.com?ggg=222";
     
     cout << "Start parser url. Url: " << url << endl << endl; 
     

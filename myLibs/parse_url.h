@@ -35,27 +35,31 @@ public:
 
     // парсим тип протокола передачи данных (http, ftp, ssh)
     char * parse_protocol(char * url) {
-        // сохраняем всё что после ':'
-        char *uri = strchr( url, ':' );
-        // проверяем, есть ли '/' после ':'
-        if (uri[1] == '/') {
+        
+        // узнаём номер символа в строке url
+        size_t pch2 = strcspn(url,":");
+        // если есть такой символ в строке 
+        if (pch2 != strlen(url)) {
 
-            // unsigned long long переменная
-            size_t pch2;
-            // узнаём номер символа в строке url
-            pch2 = strcspn(url,":");
-            // копируем в приватную переменную строку url
-            strcpy(Url::protocol, url);
-            // обрезаем по двоеточие (://)
-            Url::protocol[pch2] = '\0';
+            // сохраняем всё что после ':'
+            char *uri = strchr( url, ':' );
+            // проверяем, есть ли '/' после ':'
+            if (uri[1] == '/') {
+                
+                // копируем в приватную переменную строку url
+                strcpy(Url::protocol, url);
+                // обрезаем по двоеточие (://)
+                Url::protocol[pch2] = '\0';
 
-            return Url::protocol;
-        }else {
-            // запись значения по умолчанию 'http'
-            strcpy(Url::protocol, "http");
-            // функция возвращавет глобальную переменную
-            return Url::protocol; 
+                return Url::protocol;
+            }
         }
+
+        // запись значения по умолчанию 'http'
+        strcpy(Url::protocol, "http");
+        // функция возвращавет глобальную переменную
+        return Url::protocol; 
+        
     }
 
 
@@ -84,16 +88,20 @@ public:
 
     // отбрасываем от url имя протокола
     char * parse_uri(char *url) {
-        // сохраняем всё что после ':'
-        char *uri = strchr( url, ':' );
-        // проверяем, есть ли '/' после ':'
-        if (uri[1] == '/') { // uri получается типа '://localhost.ru/'
-            uri+=3; // сдвигаем строку на три символа
-            return uri;
-        }else {
-            // функция возвращавет полученый url
-            return url; 
+        // узнаём номер символа в строке url
+        size_t pch2 = strcspn( url, ":" );
+        // если есть такой символ в строке 
+        if ( pch2 != strlen( url ) ) {
+            // сохраняем всё что после ':'
+            char *uri = strchr( url, ':' );
+            // проверяем, есть ли '/' после ':'
+            if (uri[1] == '/') { // uri получается типа '://localhost.ru/'
+                uri+=3; // сдвигаем строку на три символа
+                return uri;
+            }        
         }
+        // функция возвращавет полученый url
+        return url; 
     }
 
 
@@ -132,14 +140,7 @@ public:
             // по умолчанию 80 порт
             if ( Url::port == 0 ) Url::port = 80;
         }
-        // if ( Url::port == 80 ) return Url::host;
-        // else {
-        //     char * response;
-        //     strcpy(response, Url::host);
-        //     strcat(response, "/");
-        //     strcat(response, Url::port);
-        //     return ;
-        // }
+
         return Url::host;
     }
 
@@ -147,7 +148,8 @@ public:
     // парсим GET параметры, если они есть
     void parse_get_param(char *url) {
         
-        char *linker = parse_link( url );
+        char linker[LENGTH_URL];
+        strcpy( linker, parse_link( url ) );
 
         // копируем в переменую path весь путь, если есть GET параметры то их позже удалим        
         strcpy( Url::path, linker );
@@ -165,12 +167,12 @@ public:
             // unsigned long long переменная
             size_t pch2;
             // сохраняем в ней номер позиции знака ?
-            pch2 = strcspn(linker,"?");
+            pch2 = strcspn( linker, "?" );
             
             // удаляем из пути GET параметры
             Url::path[pch2] = '\0'; // можно было так: Url::path[strcspn(linker,"?")] = '\0'; 
 
-             if ( pch2 == 0 ) strcpy( Url::path, "/" );
+            if ( pch2 == 0 ) strcpy( Url::path, "/" );
 
             // удаляем знак '?'
             ++get;
