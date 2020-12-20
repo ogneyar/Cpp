@@ -20,37 +20,34 @@ int main() {
     char url[] = "http://ip.jsontest.com/";
 
     // char url[] = "http://headers.jsontest.com/";
-
     
     
     cout << "Start parser url. Url: " << url << endl << endl; 
     
     Url Parse(url);
 
-
+    // функция возвращает тип протокола, по умолчанию http
     char *protocol = Parse.getProtocol();
     cout << "protocol: " << protocol << endl ;
-
+    // функция возвращает имя хоста (доменное имя)
     char *host = Parse.getHost();
     cout << "host: " << host << endl ;
-
+    // функция возвращает номер порта, по умолчанию 80
     int port = Parse.getPort();
     cout << "port: " << port << endl ;
-    
+    // функция возвращает путь ссылки вместе с GET параметрами 
     char *link = Parse.getLink();
     cout << "link: " << link << endl;
-
+    // функция возвращает путь ссылки без GET параметров 
     char *path = Parse.getPath();
     cout << "path: " << path << endl << endl;
-
+    // функция возвращает ip-адресс заданного хоста
     char *ip = getIp(host);
     cout << "Ip: " << ip << endl << endl;
 
 
-
     // посимвольное сравнение строк
     // if (strnicmp(url,"http://",7) == 0) || (strnicmp(url,"https://",8) cout << "strnicmp http://" << endl << endl;
-
     
 
     // служебная структура для хранение информации
@@ -66,74 +63,7 @@ int main() {
         return result;
     }
 
-
-    // // char hooost[1024] = "hutoryanin.ru";
-    // // cout << "gethostbyname: " <<  inet_ntoa(*((in_addr*)gethostbyname(hooost)->h_addr_list[0])) << endl;
-
-
-
-    // struct addrinfo* addr = NULL; // структура, хранящая информацию
-    // // об IP-адресе  слущающего сокета
-
-    // // Шаблон для инициализации структуры адреса
-    // struct addrinfo hints;
-    // ZeroMemory(&hints, sizeof(hints));
-
-    // // AF_INET определяет, что используется сеть для работы с сокетом
-    // hints.ai_family = AF_INET;
-    // hints.ai_socktype = SOCK_STREAM; // Задаем потоковый тип сокета
-    // hints.ai_protocol = IPPROTO_TCP; // Используем протокол TCP
-    // // Сокет биндится на адрес, чтобы принимать входящие соединения
-    // hints.ai_flags = AI_PASSIVE;
-    
-    
-    // // Инициализируем структуру, хранящую адрес сокета - addr.
-    // // HTTP-сервер будет висеть на заданном порту заданного хоста
-    // result = getaddrinfo(host, "80", &hints, &addr);
-    // // Если инициализация структуры адреса завершилась с ошибкой,
-    // // выведем сообщением об этом и завершим выполнение программы 
-    // if (result != 0) {
-    //     cerr << "getaddrinfo failed: " << result << "\n";
-    //     WSACleanup(); // выгрузка библиотеки Ws2_32.dll
-    //     system("pause");
-    //     return 1;
-    // }
-
-
-    // // Создание сокета
-    // int listen_socket = socket(addr->ai_family, addr->ai_socktype,
-    //     addr->ai_protocol);
-
-    // // int listen_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-
-    // // Если создание сокета завершилось с ошибкой, выводим сообщение,
-    // // освобождаем память, выделенную под структуру addr,
-    // // выгружаем dll-библиотеку и закрываем программу
-    // if (listen_socket == INVALID_SOCKET) {
-    //     cerr << "Error at socket: " << WSAGetLastError() << "\n";
-    //     freeaddrinfo(addr);
-    //     WSACleanup();
-    //     system("pause");
-    //     return 1;
-    // }
-
-    // // bind(listen_socket, (sockaddr *)&addr, sizeof(addr));
-
-	// // соединяемся с сервером
-	// if(connect(listen_socket, (sockaddr *)&addr, sizeof(addr)) != 0) {
-	// 	cout << "Error: failed connect to server.\n" << endl;
-	// 	system("pause");
-	// 	return 1;
-	// }
-	// cout << "Connected in the server.\n" << endl;
-
-
-
-
-
-    SOCKADDR_IN addr;
-	int sizeofaddr = sizeof(addr);
+    sockaddr_in addr;	
 	addr.sin_addr.s_addr = inet_addr(ip);
 	addr.sin_port = htons(port);
 	addr.sin_family = AF_INET;
@@ -141,16 +71,12 @@ int main() {
 	// создаём сокет
 	int listen_socket = socket(AF_INET, SOCK_STREAM, 0);
 	// соединяемся с сервером
-	if(connect(listen_socket, (SOCKADDR*)&addr, sizeof(addr)) != 0) {
+	if(connect(listen_socket, (sockaddr*)&addr, sizeof(addr)) != 0) {
 		cout << "Error: failed connect to server.\n" << endl;
 		system("pause");
 		return 1;
 	}
 	cout << "Connected in the server.\n" << endl;
-
-
-
-
 
     
     char query[2048];
@@ -183,35 +109,21 @@ int main() {
     strcpy(Rec, "");
     
     while (cnt!=0) {
-        // clear InBuff - fill 2048 bytes to NULL
+        // очищаем буфер InBuff - устанавливаем 2048 байт нулями
         memset(&InBuff,0,2048);
-        // receive a 2048 bytes from 's' sock
+        // принимаем 2048 байт от сокета
         cnt = recv (listen_socket, (char*)&InBuff, sizeof(InBuff),0);
-        // append it to main buffer 'Rec'
+        // добавляем в конец буфера 'Rec'
         strcat( Rec, InBuff );
     }
-    char* str = (char*)&Rec;
+    // char* str = (char*)&Rec;
 
-
-
-    // char* str;
-    // recv (listen_socket, (char*)str, sizeof(str),0);
-
-    cout << "Response: " << endl << str << endl << endl;;
-
-
-
-
+    cout << "Response: " << endl << Rec << endl << endl;;
 
 
     // Убираем за собой
-    closesocket(listen_socket);
-    // freeaddrinfo(addr);
+    closesocket(listen_socket);    
     WSACleanup();
-
-
-
-
 
     system("pause");
 
