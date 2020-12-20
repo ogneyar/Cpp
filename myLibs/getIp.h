@@ -21,9 +21,8 @@ char * getIp(char * host) {
     char HostName[1024];
     char *m_HostIP;
 
-    strcpy(HostName, host);
-
-    // gethostname(HostName, 1024); // получаем имя хоста
+    if (host == "local") gethostname(HostName, 1024); // получаем имя хоста
+    else strcpy(HostName, host);
 
     if(LPHOSTENT lphost = gethostbyname(HostName)) {// получаем IP хоста, т.е. нашего компа
         

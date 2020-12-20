@@ -13,15 +13,15 @@ int main() {
     
     // char url[] = "https://hutoryanin.ru/test";
 
-    // char url[] = "http://hutoryanin.ru/test?id=this&name=haski";
+    // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";  
 
-    // char url[] = "http://localhost:8000/shop/room?id=this&name=haski";
+    // char url[] = "http://local:8000/test";
 
-    char url[] = "http://localhost:8000/test";
+    char url[] = "http://ip.jsontest.com/";
 
-    // char url[] = "https://youtube.com?ggg=222";
+    // char url[] = "http://headers.jsontest.com/";
 
-    // char url[] = "https://youtube.com";
+    
     
     cout << "Start parser url. Url: " << url << endl << endl; 
     
@@ -154,23 +154,21 @@ int main() {
 
     
     char query[2048];
-    const char * user_agent = "Search Engine";
-    // const char * user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/68.0.3440.75 Chrome/68.0.3440.75 Safari/537.36";
-
+    // const char * user_agent = "Search Engine";
+    const char * user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36 OPR/72.0.3815.400";
 
     const char * accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
 
     strcpy( query, "GET " );
     strcat( query, path );
-    strcat( query, " HTTP/1.1\nHost: ");
+    strcat( query, " HTTP/1.0\nHost: ");
     strcat( query, host);
-    strcat( query, "\nUser-agent: ");
-    // strcat( query, "\nConnection: keep-alive\nUser-agent: ");
+    strcat( query, "\nUser-agent: ");    
     strcat( query, user_agent);
-    strcat( query, "\nAccept: */*\n\n");
-    // strcat( query, "\nAccept: ");
-    // strcat( query, accept);
-    // strcat( query, "\n\n");
+    // strcat( query, "\nAccept: */*\n\n");
+    strcat( query, "\nAccept: ");
+    strcat( query, accept);
+    strcat( query, "\n\n");
 
     int cnt = send(listen_socket, query, strlen(query), 0);
 
