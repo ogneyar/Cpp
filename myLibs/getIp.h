@@ -2,16 +2,8 @@
 #include <winsock2.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-char * getIp(char *);
-
 using namespace std;
 
-// int main() {
-//     char * ip = getIp((char *)"hutoryanin.ru");
-//     cout << "IP: " << ip << endl << endl;
-//     system("pause");
-//     return 0;
-// }
 
 char * getIp(char * host) {
 

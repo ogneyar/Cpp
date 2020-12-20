@@ -1,6 +1,5 @@
 #include "getIp.h"
 
-
 using namespace std;
 
 
@@ -11,6 +10,9 @@ int main() {
 	cout << "IP: " << ip << endl << endl;
 
     system("pause");
+
     return 0;
+
 }
+
 //===========================================================================
