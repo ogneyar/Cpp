@@ -54,6 +54,27 @@ int main() {
     recv(s,text,sizeof(text),0);
     printf("recv - %s", text);
 
+
+
+
+
+    // 
+    strcpy(text,"STARTTLS\r\n");
+    send(s,text,strlen(text),0);
+    printf("send - %s", text);
+    // ждем подтверждение от сервера
+    recv(s,text,sizeof(text),0);
+    printf("recv - %s", text);
+ // 
+    strcpy(text,"12345678\r\n");
+    send(s,text,strlen(text),0);
+    printf("send - %s", text);
+    // ждем подтверждение от сервера
+    recv(s,text,sizeof(text),0);
+    printf("recv - %s", text);
+
+
+
     // начинаем отправлять конверт состоящий из полей
     // MAIL FROM: и RCPT TO: После каждого поля ждем
     // подтверждение

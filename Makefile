@@ -15,3 +15,13 @@ p:
 
 ip:
 	g++ -O3 -s myLibs/getIp.cpp -o myLibs/getIp.exe -l ws2_32
+
+
+rsa:
+	g++ -O3 -s rsa_generate.cpp -o rsa_generate.exe
+
+c:
+	g++ -O3 -s _curl.cpp -o _curl.exe -l curl
+
+b:
+	g++ -O3 -s base64.cpp -o base64.exe
