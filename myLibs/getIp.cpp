@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
 
-    char * ip = getIp((char *)"hutoryanin.ru");
+    char * ip = getIp("hutoryanin.ru");
 
 	cout << "IP: " << ip << endl << endl;
 

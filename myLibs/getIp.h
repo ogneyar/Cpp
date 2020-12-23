@@ -1,11 +1,11 @@
-#include <iostream>
 #include <winsock2.h>
+#include <iostream>
 #pragma comment(lib, "Ws2_32.lib")
 
 using namespace std;
 
 
-char * getIp(char * host) {
+char * getIp(string host) {
 
     WSADATA wsaData;
     WSAStartup(MAKEWORD(1,1), &wsaData); // инициализируем socket'ы используя Ws2_32.dll для процесса
@@ -14,7 +14,7 @@ char * getIp(char * host) {
     char *m_HostIP;
 
     if (host == "local") gethostname(HostName, 1024); // получаем имя хоста
-    else strcpy(HostName, host);
+    else strcpy(HostName, host.c_str());
 
     if(LPHOSTENT lphost = gethostbyname(HostName)) {// получаем IP хоста, т.е. нашего компа
         

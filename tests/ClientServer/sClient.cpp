@@ -39,7 +39,6 @@ int main(int argc, char* argv[]) {
 	}
 
 	SOCKADDR_IN addr;
-	int sizeofaddr = sizeof(addr);
 	addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	addr.sin_port = htons(8000);
 	addr.sin_family = AF_INET;
