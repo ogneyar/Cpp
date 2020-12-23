@@ -175,6 +175,12 @@ int main() {
     SendPacket("AUTH LOGIN\r\n");
     RecvPacket();
 
+    // логин в кодировке base64
+    SendPacket("ya13th@mail.ru\r\n");
+    RecvPacket();
+    // пароль в кодировке base64
+    SendPacket("\r\n");
+    RecvPacket();
 
 
     // начинаем отправлять конверт состоящий из полей
@@ -187,7 +193,7 @@ int main() {
     RecvPacket();
 
     // сообщаем получателя
-    strcpy(text,"RCPT TO: ya13th@mail.ru\r\n");
+    strcpy(text,"RCPT TO: hutor_yanin@mail.ru\r\n");
     SendPacket(text);
     // ждем подтверждение от сервера
     RecvPacket();
