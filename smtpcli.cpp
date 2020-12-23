@@ -176,7 +176,7 @@ int main() {
     RecvPacket();
 
     // логин в кодировке base64
-    SendPacket("ya13th@mail.ru\r\n");
+    SendPacket("ya13th\r\n");
     RecvPacket();
     // пароль в кодировке base64
     SendPacket("\r\n");
