@@ -9,7 +9,7 @@
 
 #include <iostream>
 
-#include "myLibs/base64.h"
+#include "../../myLibs/base64.h"
 
 #define BUF_SIZE 1024
 
@@ -249,9 +249,14 @@ int main() {
     strcpy( text, "QUIT" );
     SendPacket( text );
 
+    // закрываем ssl соединение
+    SSL_shutdown(ssl);
+
     // закрываем сокет
     closesocket( s );
     WSACleanup();
+
+    system("pause");
 
     return 0;
 }
