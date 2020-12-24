@@ -187,7 +187,7 @@ int main() {
     SendPacket("\r\n");
     RecvPacket();
 
-    data = "edirug34";
+    data = "********";
     enc = b64_encode((const unsigned char *)data, strlen(data));
     // пароль в кодировке base64
     SendPacket(enc);
