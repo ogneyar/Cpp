@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+#include "base64.h"
+
 #define BUF_SIZE 1024
 
 using namespace std;
@@ -175,10 +177,20 @@ int main() {
     SendPacket("AUTH LOGIN\r\n");
     RecvPacket();
 
+    const char * data;
+    char * enc;
+
+    data = "ya13th";
+    enc = b64_encode((const unsigned char *)data, strlen(data));
     // логин в кодировке base64
-    SendPacket("ya13th\r\n");
+    SendPacket(enc);
+    SendPacket("\r\n");
     RecvPacket();
+
+    data = "edirug34";
+    enc = b64_encode((const unsigned char *)data, strlen(data));
     // пароль в кодировке base64
+    SendPacket(enc);
     SendPacket("\r\n");
     RecvPacket();
 

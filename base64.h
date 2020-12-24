@@ -154,9 +154,9 @@ int b64_decode(const char *in, unsigned char *out, size_t outlen)
 
 
 
-int main(int argc, char **argv)
+int tmain(int argc, char **argv)
 {
-	const char *data = "12BC123Test Lets Try this' input and see What \"happens\"";
+	const char *data = "ABC123Test Lets Try this' input and see What \"happens\"";
 	char       *enc;
 	char       *out;
 	size_t      out_len;
