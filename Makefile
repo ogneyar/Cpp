@@ -1,5 +1,5 @@
 all:
-	g++ -O3 -s smtpcli.cpp -l ssl -l crypto -l ws2_32
+	g++ -O3 -s msgBox.cpp 
 
 clean:
 	del -f a.exe
@@ -22,6 +22,9 @@ ssl:
 
 smtp:
 	g++ -O3 -s tests/smtp/smtpcli.cpp -o tests/smtp/smtpcli.exe -l ssl -l crypto -l ws2_32
+
+msg:
+	g++ -O3 -s tests/msg/msgBox.cpp -o tests/msg/msgBox.exe
 
 
 
