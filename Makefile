@@ -1,5 +1,5 @@
 all:
-	g++ -O3 -s msgBox.cpp 
+	g++ -O3 -s test.cpp 
 
 clean:
 	del -f a.exe

@@ -1,14 +1,9 @@
 #include <windows.h>
-#include <string>
 #include <iostream>
 
 using namespace std;
  
 HWND hwnd = GetForegroundWindow();
-
-// string text;
-// string capt;
-// MessageBox(NULL,text.c_str(),capt.c_str(),MB_OK);
 
  
 LPCTSTR str1 = (LPCTSTR)"Programina";
