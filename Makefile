@@ -33,10 +33,10 @@ msg:
 
 
 rsae:
-	g++ -O3 -s rsa_encrypt.cpp -o rsa_encrypt.exe
+	g++ -O3 -s rsa_encrypt.cpp -o rsa_encrypt.exe -l ssl -l crypto
 
 rsag:
-	g++ -O3 -s rsa_generate.cpp -o rsa_generate.exe
+	g++ -O3 -s rsa_generate.cpp -o rsa_generate.exe -l ssl -l crypto
 
 curl:
 	g++ -O3 -s _curl.cpp -o _curl.exe -l curl

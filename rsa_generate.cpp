@@ -12,7 +12,7 @@
 
 #define PUBLIC "./public.key"
 
-void main()
+int main()
 
 {
 
@@ -57,5 +57,7 @@ void main()
 /* Освобождаем память, выделенную под структуру rsa */
 
     RSA_free(rsa);
+
+    return 0;
 
 }
