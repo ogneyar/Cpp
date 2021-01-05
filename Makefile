@@ -6,7 +6,7 @@ clean:
 
 
 test:
-	g++ -O3 -s test.cpp
+	g++ -O3 -s test.cpp	
 
 
 g:
