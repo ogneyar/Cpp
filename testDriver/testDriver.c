@@ -11,12 +11,12 @@ NTSTATUS DriverEntry(IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING Registry
 {
   DriverObject->DriverUnload = UnloadRoutine;
  
-  DbgPrint(«Hello world!\n»);
+  DbgPrint("Hello world!\n"); 
  
   return STATUS_SUCCESS;
 }
  
 VOID UnloadRoutine(IN PDRIVER_OBJECT DriverObject)
 {
-  DbgPrint(«Goodbye!\n»);
+  DbgPrint("Goodbye!\n");
 }

@@ -2,21 +2,14 @@
 
 // Предварительные объявления функций:
 NTSTATUS DeviceControlRoutine(IN PDEVICE_OBJECT fdo, IN PIRP Irp);
-
 VOID UnloadRoutine(IN PDRIVER_OBJECT DriverObject);
-
 NTSTATUS ReadWrite_IRPhandler(IN PDEVICE_OBJECT fdo, IN PIRP Irp);
-
 NTSTATUS Create_File_IRPprocessing(IN PDEVICE_OBJECT fdo, IN PIRP Irp);
-
 NTSTATUS Close_HandleIRPprocessing(IN PDEVICE_OBJECT fdo, IN PIRP Irp);
 
 KSPIN_LOCK SpinLock;
 
-
 #pragma code_seg("INIT") // положим начало секции INIT
-
-//Итак, мы подключили заголовочный файл Driver.h, сделали несколько предварительных объявлений важных функций, объявили глобальную переменную и определили начало секции INIT. А теперь - реализация функции загрузки драйвера.
 
 
 extern "C"
@@ -34,20 +27,20 @@ NTSTATUS DriverEntry (IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING Registr
     #endif
 
     // Экспортируем точки входа в драйвер. Поскольку наш драйвер - legacy, процедуру AddDevice мы не экспортируем.
-    DriverObject->DriverUnload = UnloadRoutine;
-    DriverObject->MajorFunction[IRP_MJ_CREATE]= Create_File_IRPprocessing;
-    DriverObject->MajorFunction[IRP_MJ_CLOSE] = Close_HandleIRPprocessing;
-    DriverObject->MajorFunction[IRP_MJ_READ] = ReadWrite_IRPhandler;
-    DriverObject->MajorFunction[IRP_MJ_WRITE] = ReadWrite_IRPhandler;
-    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL]=DeviceControlRoutine;
+    DriverObject->DriverUnload = (PDRIVER_UNLOAD)UnloadRoutine;
+    DriverObject->MajorFunction[IRP_MJ_CREATE] = (PDRIVER_DISPATCH)Create_File_IRPprocessing;
+    DriverObject->MajorFunction[IRP_MJ_CLOSE] = (PDRIVER_DISPATCH)Close_HandleIRPprocessing;
+    DriverObject->MajorFunction[IRP_MJ_READ] = (PDRIVER_DISPATCH)ReadWrite_IRPhandler;
+    DriverObject->MajorFunction[IRP_MJ_WRITE] = (PDRIVER_DISPATCH)ReadWrite_IRPhandler;
+    DriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = (PDRIVER_DISPATCH)DeviceControlRoutine;
 
     // Начнём создавать символьную ссылку
     RtlInitUnicodeString(&devName, L"\\Device\\PRIMER"); // данная процедура тоже должна бы располагаться в AddDevice.
 
-    // Создаём свой FDO и получаем указатель на него в fdo. Размер структуры PRIMER_DEVICE_EXTENSION передаётся для // того, чтобы при создании FDO выделить под неё память.
+    // Создаём свой FDO и получаем указатель на него в fdo. Размер структуры PRIMER_DEVICE_EXTENSION передаётся для того, чтобы при создании FDO выделить под неё память.
     status = IoCreateDevice(DriverObject,
-    sizeof(PRIMER_DEVICE_EXTENSION),
-    &devName, FILE_DEVICE_UNKNOWN,0,FALSE, &fdo);
+        sizeof(PRIMER_DEVICE_EXTENSION),
+        &devName, FILE_DEVICE_UNKNOWN,0,FALSE, &fdo);
     if(!NT_SUCCESS(status)) return status; // данная процедура также должна бы располагаться в AddDevice.
 
     // Получаем указатель на область, предназначенную для PRIMER_DEVICE_EXTENSION. 
@@ -64,7 +57,7 @@ NTSTATUS DriverEntry (IN PDRIVER_OBJECT DriverObject, IN PUNICODE_STRING Registr
 
     UNICODE_STRING symLinkName; 
 
-    #define SYM_LINK_NAME L"\\DosDevices\\Primer" // именно ТАКОЙ код предназначен для того, чтобы символьная ссылка // работала и в Windows 9x, и в NT.
+    #define SYM_LINK_NAME L"\\DosDevices\\Primer" // именно ТАКОЙ код предназначен для того, чтобы символьная ссылка работала и в Windows 9x, и в NT.
     RtlInitUnicodeString(&symLinkName, SYM_LINK_NAME);
     dx->ustrSymLinkName = symLinkName;
 
