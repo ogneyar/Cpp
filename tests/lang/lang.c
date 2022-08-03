@@ -16,6 +16,7 @@ void test(char * str);
 
 int main() {
     
+    printf("\r\n");
     printf("-= C =-  win%d\r\n\r\n", OS_BIT);
     printf("\r\n");
 
@@ -28,13 +29,13 @@ int main() {
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ" // 65 - 90 (0x41 - 0x5A)
         "[\\]^_`" // 91 - 96 (0x5B - 0x60)
         "abcdefghijklmnopqrstuvwxyz" // 97 - 122 (0x61 - 0x7A)
-        "{|}~\b\t\n\r" // 123, 124, 125, 126, 8, 9, 10, 13 (0x7B, 0x7C, 0x7D, 0x7E, 0x08, 0x09, 0x0A, 0x0D)
+        "{|}~" // 123, 124, 125, 126 (0x7B, 0x7C, 0x7D, 0x7E)
         "№"; // 226 132 150 (0xE28496)
     test(str);
   
-  
-    // char y;  
-    // scanf("%c", &y);
+    printf("%c%c%c%c%c %c%c%c %c%c%c\r\n",143,224,165,225,225,237,173,168,170,165,169);
+    char y;  
+    scanf("%c", &y);
 
   return 0;
 }
@@ -42,12 +43,11 @@ int main() {
 
 
 void test(char * str) {
-    char one[] = "а"; 
+    char one[] = "А"; 
 
     if ((str[0] & 0x00ff) == (one[0] & 0x00ff)) printf("Rusian text\r\n");
-    if (((str[0] & 0x00ff) == (one[0] & 0x00ff)) && ((str[1] & 0x00ff) == (one[1] & 0x00ff))) printf("text equal\r\n");
-    else printf("text NOT equal\r\n");
-    // if ((str[1] & 0x00ff) == 176) printf("A\r\n");
+    if (((str[0] & 0x00ff) == (one[0] & 0x00ff)) && ((str[1] & 0x00ff) == (one[1] & 0x00ff))) printf("first symbol equal %c\r\n", 128);
+    else printf("first symbol NOT equal %c\r\n", 128);
   
     printf("\r\n");
 
@@ -64,6 +64,7 @@ void test(char * str) {
     int i = 0;
     while(str[i]) {
         if ( ((str[i] & 0x00ff) == 208) || ((str[i] & 0x00ff) == 209) ) {
+            // НИЧЕГО НЕ НАДО ДЕЛАТЬ
             // printf("%d ",(str[i] & 0x00ff));
             // printf("(%02X) ",(str[i] & 0x00ff));
         }else if ( 
@@ -77,29 +78,39 @@ void test(char * str) {
                 ) 
             ) 
         ) {
-            printf("%d ",(str[i] & 0x00ff));
-            printf("(%02X) ",(str[i] & 0x00ff));
+            // НИЧЕГО НЕ НАДО ДЕЛАТЬ
+            // printf("%d ",(str[i] & 0x00ff));
+            // printf("(0x%02X) ",(str[i] & 0x00ff));
         }else if ( ((str[i-1] & 0x00ff) == 208) || ((str[i-1] & 0x00ff) == 209) ) {
             printf("%d %d ", (str[i-1] & 0x00ff), (str[i] & 0x00ff));
             printf("(0x%02X%02X) ", (str[i-1] & 0x00ff), (str[i] & 0x00ff));
             if ((str[i-1] & 0x00ff) == 208) {
-                if ((str[i] & 0xff) == 129) printf("- %c\r\n", 240); // Ё
-                else printf("- %c\r\n", (str[i] & 0xff)-16);
+                if ((str[i] & 0xff) == 129) printf("- %c - %d (0x%02X)\r\n", 240, 240, 240); // Ё
+                else printf("- %c - %d (0x%02X)\r\n", (str[i] & 0xff)-16, (str[i] & 0xff)-16, (str[i] & 0xff)-16);
             }else { // если 209
-                if ((str[i] & 0xff) == 145) printf("- %c\r\n", 241); // ё
-                else printf("- %c\r\n", (str[i] & 0xff)+96);
+                if ((str[i] & 0xff) == 145) printf("- %c - %d (0x%02X)\r\n", 241, 241, 241); // ё
+                else printf("- %c - %d (0x%02X)\r\n", (str[i] & 0xff)+96, (str[i] & 0xff)+96, (str[i] & 0xff)+96);
             }
+        }else if ( 
+            (
+                ( 
+                    ( str[i] & 0x00ff ) == 150 
+                ) && ( 
+                    ( str[i-1] & 0x00ff ) == 132 
+                ) && ( 
+                    ( str[i-2] & 0x00ff ) == 226 
+                ) 
+            ) 
+        ) {
+            printf("%d %d %d ", (str[i-2] & 0x00ff), (str[i-1] & 0x00ff), (str[i] & 0x00ff));
+            printf("(0x%02X%02X%02X) ", (str[i-2] & 0x00ff), (str[i-1] & 0x00ff), (str[i] & 0x00ff));
+            printf("- %c\r\n", 252);
         }else {
             printf("%d ",(str[i] & 0x00ff));
-            printf("(%02X)\r\n",(str[i] & 0x00ff));
+            printf("(0x%02X) ",(str[i] & 0x00ff));
+            if ((str[i] & 0x00ff) == 32) printf("- %c%c%c%c%c%c%c%c\r\n",34,175,224,174,161,165,171,34);
+            else printf("- %c\r\n",(str[i] & 0x00ff));
         }
-
-        // if ((str[i-1] & 0xff) == 208) {
-        //     if ((str[i] & 0xff) == 129) printf("%c ", 240); // Ё
-        //     else printf(" %c \r\n", (str[i] & 0xff)-16);
-        // }
-
-        // printf("\r\n");
 
         i++;
     }
@@ -126,6 +137,11 @@ void test(char * str) {
     // printf("%c ",252); // №
     // printf("%c ",0b10000000); // А русская (128)
 
-    printf("\r\n-----------------\r\n");
+    printf("\r\n\r\n-----------------\r\n");
+
+    printf("\r\n%c\r\n",148);
+    printf("%d\r\n", ( (("Ф"[0] & 0x00ff)<<8) | ("Ф"[1] & 0x00ff) ) );
+    printf("0x%04X\r\n", ( (("Ф"[0] & 0x00ff)<<8) | ("Ф"[1] & 0x00ff) ) );
+    printf("0b1101000010100100\r\n\r\n");
     
 }

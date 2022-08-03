@@ -1,1 +1,1 @@
-# C++ learning
+# C and C++ learning
