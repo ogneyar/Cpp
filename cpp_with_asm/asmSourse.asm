@@ -11,16 +11,16 @@ EXTRN  readName : proc;//and void* readName()
 ;-----------Function definitions--------------------
 sayHello PROC
 
-call readName; eax = readName()
-lea ebx, helloFormat; ebx = &helloFormat
+    call readName; eax = readName()
+    lea ebx, helloFormat; ebx = &helloFormat
 
-;printf(ebx,eax)
-push eax
-push ebx
-call printf
-add esp, 8;pop x2
+    ;printf(ebx,eax)
+    push eax
+    push ebx
+    call printf
+    add esp, 8;pop x2
 
-retn
+    retn
 
 sayHello ENDP
 
